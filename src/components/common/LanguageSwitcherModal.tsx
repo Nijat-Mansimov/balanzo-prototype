@@ -37,8 +37,16 @@ export const LanguageSwitcherModal: React.FC<LanguageSwitcherModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-h-[85%] bg-white dark:bg-neutral-800 rounded-t-3xl p-5 shadow-2xl border-t border-neutral-200 dark:border-neutral-700 flex flex-col animate-in slide-in-from-bottom-5 duration-200">
+    <div 
+      className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs overscroll-contain animate-in fade-in duration-200 pointer-events-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div 
+        className="w-full max-h-[85%] bg-white dark:bg-neutral-800 rounded-t-3xl p-5 shadow-2xl border-t border-neutral-200 dark:border-neutral-700 flex flex-col overscroll-contain animate-in slide-in-from-bottom-5 duration-200 pointer-events-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
           <div className="flex items-center gap-2">

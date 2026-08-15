@@ -1,6 +1,6 @@
 import React from 'react';
-import { Bell, ChevronDown, ArrowLeft, ShieldCheck, Globe } from 'lucide-react';
-import { WorkspaceType, ScreenView } from '../../types';
+import { Bell, ChevronDown, ArrowLeft } from 'lucide-react';
+import { WorkspaceType } from '../../types';
 import { Avatar } from './Avatar';
 import { CURRENT_USER } from '../../data/mockData';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -15,7 +15,6 @@ interface HeaderProps {
   onOpenNotifications: () => void;
   unreadCount?: number;
   rightAction?: React.ReactNode;
-  onOpenLanguageModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,9 +27,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNotifications,
   unreadCount = 2,
   rightAction,
-  onOpenLanguageModal,
 }) => {
-  const { t, currentLanguageOption } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <header className="sticky top-0 z-30 pt-2 pb-3 px-4 bg-neutral-100/90 dark:bg-neutral-900/90 backdrop-blur-md transition-colors">
@@ -40,10 +38,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onBack}
               id="btn-header-back"
-              className="p-2 -ml-2 rounded-full hover:bg-neutral-200/70 dark:hover:bg-neutral-800 transition-colors active:scale-95 text-neutral-800 dark:text-neutral-100"
+              className="p-2 -ml-2 rounded-full hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors active:scale-95 text-neutral-800 dark:text-neutral-100"
               aria-label="Go back"
             >
-              <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+              <ArrowLeft className="w-5 h-5 stroke-[2]" />
             </button>
             {title && (
               <div>
@@ -92,31 +90,19 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         )}
 
-        <div className="flex items-center gap-1.5">
-          {onOpenLanguageModal && (
-            <button
-              onClick={onOpenLanguageModal}
-              id="btn-header-lang"
-              className="p-2 rounded-full hover:bg-neutral-200/70 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors active:scale-95 flex items-center gap-1"
-              aria-label="Change language"
-              title={currentLanguageOption.name}
-            >
-              <span className="text-sm">{currentLanguageOption.flag}</span>
-            </button>
-          )}
-
+        <div className="flex items-center gap-1">
           {rightAction ? (
             rightAction
           ) : (
             <button
               onClick={onOpenNotifications}
               id="btn-header-notifications"
-              className="relative p-2.5 rounded-full hover:bg-neutral-200/70 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors active:scale-95"
+              className="relative p-2 rounded-full hover:bg-neutral-200/60 dark:hover:bg-neutral-800 text-neutral-800 dark:text-neutral-100 transition-colors active:scale-95 flex items-center justify-center"
               aria-label="Open notifications"
             >
-              <Bell className="w-5 h-5 stroke-[2]" />
+              <Bell className="w-5 h-5 stroke-[1.8]" />
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#6552FF] ring-2 ring-white dark:ring-neutral-900 animate-pulse" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#6552FF] ring-2 ring-white dark:ring-neutral-900" />
               )}
             </button>
           )}

@@ -18,6 +18,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 interface MobileFrameProps {
   children: React.ReactNode;
+  modals?: React.ReactNode;
+  hasActiveModal?: boolean;
   currentScreen: ScreenView;
   onNavigate: (screen: ScreenView) => void;
   onResetData: () => void;
@@ -30,6 +32,8 @@ interface MobileFrameProps {
 
 export const MobileFrame: React.FC<MobileFrameProps> = ({
   children,
+  modals,
+  hasActiveModal = false,
   currentScreen,
   onNavigate,
   onResetData,
@@ -118,14 +122,15 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({
               <option value="home">01 • Home Dashboard</option>
               <option value="groups">02 • Groups Hub</option>
               <option value="group-detail">03 • Group Destination Hub (Baku)</option>
-              <option value="add-expense">04 • Add Expense Wizard</option>
-              <option value="balances">05 • Pairwise Balances</option>
-              <option value="settlement">06 • Record Settlement</option>
-              <option value="friends">07 • Friends & Requests</option>
-              <option value="notifications">08 • Global Notifications</option>
-              <option value="profile">09 • Profile & Pickers</option>
-              <option value="plan-usage">10 • Plan & Entitlement Usage</option>
-              <option value="settings">11 • Settings & Security</option>
+              <option value="analytics">04 • Expense Analytics (Monthly & Categories)</option>
+              <option value="add-expense">05 • Add Expense Wizard</option>
+              <option value="balances">06 • User Balances & Wallet</option>
+              <option value="settlement">07 • Record Settlement</option>
+              <option value="friends">08 • Friends & Requests</option>
+              <option value="notifications">09 • Global Notifications</option>
+              <option value="profile">10 • Profile & Pickers</option>
+              <option value="plan-usage">11 • Plan & Entitlement Usage</option>
+              <option value="settings">12 • Settings & Security</option>
             </select>
           )}
 
@@ -202,12 +207,19 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({
               </div>
 
               {/* Scrollable Screen Content */}
-              <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative flex flex-col">
+              <div className={`flex-1 ${hasActiveModal ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'} no-scrollbar relative flex flex-col`}>
                 {children}
               </div>
 
+              {/* Fixed Screen Modals Overlay Layer */}
+              {modals && (
+                <div className="absolute inset-0 z-50 pointer-events-none">
+                  {modals}
+                </div>
+              )}
+
               {/* iOS Home Gesture Indicator Bar */}
-              <div className="sticky bottom-0 left-0 right-0 h-4 bg-transparent flex items-center justify-center pointer-events-none z-40">
+              <div className="sticky bottom-0 left-0 right-0 h-4 bg-transparent flex items-center justify-center pointer-events-none z-30">
                 <div className="w-32 h-1 rounded-full bg-neutral-900/40 dark:bg-white/40 mb-1" />
               </div>
             </div>

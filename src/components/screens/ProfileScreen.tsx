@@ -12,7 +12,12 @@ import {
   X, 
   Upload, 
   Trash2,
-  AlertCircle
+  AlertCircle,
+  CreditCard,
+  Wallet,
+  Plus,
+  BarChart3,
+  TrendingUp
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { Avatar } from '../common/Avatar';
@@ -24,7 +29,11 @@ interface ProfileScreenProps {
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onOpenPlanUsage: () => void;
   onOpenSettings: () => void;
+  onOpenAnalytics?: () => void;
   onOpenLanguageModal?: () => void;
+  onOpenAddPaymentMethod?: () => void;
+  onOpenAddFunds?: () => void;
+  walletBalance?: number;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -32,7 +41,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onUpdateProfile,
   onOpenPlanUsage,
   onOpenSettings,
+  onOpenAnalytics,
   onOpenLanguageModal,
+  onOpenAddPaymentMethod,
+  onOpenAddFunds,
+  walletBalance = 425.50,
 }) => {
   const { t, language, setLanguage, languages, currentLanguageOption } = useLanguage();
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
@@ -106,10 +119,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   return (
     <div className="space-y-4 px-4 pb-24 pt-1 animate-in fade-in duration-300">
       {/* Profile Header Card */}
-      <div className="p-5 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 text-center relative shadow-sm">
+      <div className="p-5 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 text-center relative shadow-xs">
         <div className="relative inline-block mx-auto mb-3">
           <Avatar
-            src={profile.avatarUrl}
+            imageUrl={profile.avatarUrl}
             name={profile.name}
             initials={profile.initials}
             size="xl"
@@ -120,21 +133,82 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="absolute bottom-0 right-0 p-2 rounded-full bg-[#6552FF] text-white shadow-md active:scale-95 transition-transform"
             aria-label={t('profile.change_photo', undefined, 'Change photo')}
           >
-            <Camera className="w-3.5 h-3.5" />
+            <Camera className="w-3.5 h-3.5 stroke-[2]" />
           </button>
         </div>
 
-        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">
+        <h1 className="text-lg font-black text-neutral-900 dark:text-white">
           {profile.name}
         </h1>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium mt-0.5">
           {profile.email}
         </p>
 
         {/* Plan Pill */}
-        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-900/40 text-xs font-bold text-[#6552FF] dark:text-indigo-300">
-          <Sparkles className="w-3.5 h-3.5" />
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/40 text-xs font-bold text-[#6552FF] dark:text-indigo-300">
+          <Sparkles className="w-3.5 h-3.5 stroke-[2]" />
           <span>{t('profile.free_plan_badge', undefined, 'Free Plan')} ({profile.groupsUsed}/{profile.groupsLimit} {t('profile.groups_count', undefined, 'groups')})</span>
+        </div>
+      </div>
+
+      {/* Wallet & Payment Methods Section */}
+      <div className="space-y-2">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          Wallet & Payments
+        </h2>
+
+        <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 space-y-3 shadow-xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <Wallet className="w-4 h-4 stroke-[2]" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                  In-App Balance
+                </span>
+                <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                  ${walletBalance.toFixed(2)} USD
+                </span>
+              </div>
+            </div>
+            {onOpenAddFunds && (
+              <button
+                onClick={onOpenAddFunds}
+                id="btn-profile-add-funds"
+                className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Add Funds</span>
+              </button>
+            )}
+          </div>
+
+          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-700/80 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-300 flex items-center justify-center">
+                <CreditCard className="w-4 h-4 stroke-[2]" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                  Payment Methods
+                </span>
+                <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
+                  Visa •••• 4242 (Default)
+                </span>
+              </div>
+            </div>
+            {onOpenAddPaymentMethod && (
+              <button
+                onClick={onOpenAddPaymentMethod}
+                id="btn-profile-add-card"
+                className="px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-900 dark:text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Add Method</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -144,30 +218,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           {t('profile.account_info', undefined, 'Account Information')}
         </h2>
 
-        <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 space-y-3 shadow-sm">
+        <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 space-y-3 shadow-xs">
           {/* Display Name */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+            <label className="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
               {t('profile.display_name', undefined, 'Display Name')}
             </label>
             <input
               type="text"
               value={profile.name}
               onChange={(e) => onUpdateProfile({ name: e.target.value })}
-              className="w-full p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700/40 border border-neutral-200 dark:border-neutral-700 text-xs font-semibold text-neutral-900 dark:text-white"
+              className="w-full p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 text-xs font-semibold text-neutral-900 dark:text-white focus:ring-2 focus:ring-[#6552FF]/30 outline-none"
             />
           </div>
 
           {/* Read Only Email with caption */}
-          <div className="space-y-1 pt-1 border-t border-neutral-100 dark:border-neutral-700/60">
-            <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+          <div className="space-y-1 pt-1 border-t border-neutral-100 dark:border-neutral-700/80">
+            <label className="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
               {t('profile.email_address', undefined, 'Email Address')}
             </label>
-            <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700/40 border border-neutral-200 dark:border-neutral-700 flex items-center justify-between text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+            <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 flex items-center justify-between text-xs font-semibold text-neutral-700 dark:text-neutral-200">
               <span>{profile.email}</span>
               <span className="text-[10px] font-medium text-neutral-400">Read-only</span>
             </div>
-            <p className="text-[10px] text-neutral-400 italic">
+            <p className="text-[10px] text-neutral-500 dark:text-neutral-400 italic">
               {t('profile.contact_support', undefined, 'Contact support to change your email')}
             </p>
           </div>
@@ -259,6 +333,42 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </span>
               <ChevronRight className="w-4 h-4 text-neutral-400" />
             </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Analytics & Reports Section */}
+      <div className="space-y-2">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          Analytics & Insights
+        </h2>
+
+        <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-xs">
+          <button
+            type="button"
+            onClick={onOpenAnalytics}
+            id="btn-profile-open-analytics"
+            className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-400 flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 stroke-[2.5]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                    Expense Analytics
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 font-bold">
+                    Monthly Breakdown
+                  </span>
+                </div>
+                <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                  Spending trends, category charts & cash flow
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </div>

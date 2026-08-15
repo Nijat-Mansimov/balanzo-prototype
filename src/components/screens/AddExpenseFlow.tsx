@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Check, 
@@ -16,7 +16,8 @@ import {
   Ticket, 
   ShoppingBag, 
   Calendar,
-  AlertCircle
+  AlertCircle,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Group, Member, SplitMethodType, Expense } from '../../types';
@@ -42,6 +43,14 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
   const [selectedGroupId, setSelectedGroupId] = useState<string>(
     preselectedGroupId || groups[0]?.id || ''
   );
+
+  useEffect(() => {
+    if (preselectedGroupId) {
+      setSelectedGroupId(preselectedGroupId);
+    } else if (!selectedGroupId && groups.length > 0) {
+      setSelectedGroupId(groups[0].id);
+    }
+  }, [preselectedGroupId, groups]);
   
   // Step 1 Basics
   const [title, setTitle] = useState('Dinner at Port Cafe');
@@ -193,7 +202,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
   const sumOfShares = calculatedSplits.reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-white dark:bg-neutral-900 overflow-y-auto animate-in slide-in-from-bottom-6 duration-300">
+    <div className="absolute inset-0 z-50 pointer-events-auto flex flex-col bg-white dark:bg-neutral-900 overflow-y-auto animate-in slide-in-from-bottom-6 duration-300">
       {/* Scoped confetti canvas inside phone bounds */}
       <canvas
         ref={canvasRef}
@@ -206,7 +215,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             if (step > 1 && step < 4) setStep((s) => (s - 1) as any);
             else onClose();
           }}
-          className="p-2 -ml-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200"
+          className="p-2 -ml-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 cursor-pointer"
           aria-label="Back"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -232,14 +241,14 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
 
         <button
           onClick={onClose}
-          className="text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white px-2 py-1"
+          className="text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white px-2 py-1 cursor-pointer"
         >
           {step === 4 ? t('btn.done', undefined, 'Done') : t('btn.cancel', undefined, 'Cancel')}
         </button>
       </div>
 
       {/* Main Flow Body */}
-      <div className="flex-1 p-4 max-w-lg mx-auto w-full">
+      <div className="flex-1 p-4 max-w-lg mx-auto w-full pb-8">
         {/* ================= STEP 1: BASICS ================= */}
         {step === 1 && (
           <div className="space-y-5 animate-in fade-in duration-200">
@@ -396,10 +405,10 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 type="button"
                 onClick={handleNextStep1}
                 id="btn-step1-next"
-                className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 px-6 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-sm font-extrabold shadow-lg shadow-neutral-950/15 dark:shadow-white/10 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>{t('btn.continue', undefined, 'Continue')}</span>
-                <ChevronRight className="w-4 h-4" />
+                <span>{t('btn.continue', undefined, 'Continue to Split')}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -413,7 +422,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 {t('expense.step3_title', undefined, 'How would you like to split?')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                {t('expense.step3_subtitle', undefined, 'Choose the calculation method')} for ${parsedTotal.toFixed(2)}
+                {t('expense.step3_subtitle', undefined, 'Choose the calculation method')} for ${(parsedTotal || 0).toFixed(2)}
               </p>
             </div>
 
@@ -423,7 +432,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               <button
                 type="button"
                 onClick={() => setSplitMethod('equal')}
-                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all ${
+                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all cursor-pointer ${
                   splitMethod === 'equal'
                     ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/10 ring-1 ring-[#6552FF]'
                     : 'border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -440,7 +449,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                       {t('expense.split_equally', undefined, 'Equal split')}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {t('expense.split_summary', undefined, 'Split equally')} (${(parsedTotal / members.length).toFixed(2)} {t('expense.split_each', undefined, 'each')})
+                      {t('expense.split_summary', undefined, 'Split equally')} (${((parsedTotal || 0) / (members.length || 1)).toFixed(2)} {t('expense.split_each', undefined, 'each')})
                     </p>
                   </div>
                 </div>
@@ -455,7 +464,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               <button
                 type="button"
                 onClick={() => setSplitMethod('exact')}
-                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all ${
+                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all cursor-pointer ${
                   splitMethod === 'exact'
                     ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/10 ring-1 ring-[#6552FF]'
                     : 'border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -487,7 +496,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               <button
                 type="button"
                 onClick={() => setSplitMethod('percentage')}
-                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all ${
+                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all cursor-pointer ${
                   splitMethod === 'percentage'
                     ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/10 ring-1 ring-[#6552FF]'
                     : 'border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -519,7 +528,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               <button
                 type="button"
                 onClick={() => setSplitMethod('shares')}
-                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all ${
+                className={`w-full p-4 rounded-3xl border flex items-center justify-between text-left transition-all cursor-pointer ${
                   splitMethod === 'shares'
                     ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/10 ring-1 ring-[#6552FF]'
                     : 'border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -549,11 +558,11 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             </div>
 
             {/* Next CTA */}
-            <div className="pt-4 flex gap-2">
+            <div className="pt-4 flex gap-2.5">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-3.5 px-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 font-bold text-xs"
+                className="py-4 px-5 rounded-2xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 font-bold text-xs active:scale-95 transition-all cursor-pointer"
               >
                 {t('btn.back', undefined, 'Back')}
               </button>
@@ -561,10 +570,10 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 type="button"
                 onClick={handleNextStep2}
                 id="btn-step2-next"
-                className="flex-1 py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-4 px-6 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-sm font-extrabold shadow-lg shadow-neutral-950/15 dark:shadow-white/10 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <span>{t('btn.continue', undefined, 'Review & Confirm')}</span>
-                <ChevronRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -601,7 +610,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                     {t('expense.total', undefined, 'Total')}
                   </span>
                   <div className="text-xl font-black text-neutral-900 dark:text-white tabular-nums">
-                    ${parsedTotal.toFixed(2)}
+                    ${(parsedTotal || 0).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -632,7 +641,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                           </span>
                         </div>
                         <div className="text-xs font-bold text-neutral-900 dark:text-white tabular-nums">
-                          ${split.amount.toFixed(2)}
+                          ${(split.amount || 0).toFixed(2)}
                         </div>
                       </div>
                     );
@@ -647,17 +656,17 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                   TOTAL = SUM OF SHARES
                 </span>
                 <span className="font-extrabold tabular-nums text-emerald-900 dark:text-emerald-200">
-                  ${sumOfShares.toFixed(2)}
+                  ${(sumOfShares || 0).toFixed(2)}
                 </span>
               </div>
             </div>
 
             {/* Final CTA */}
-            <div className="pt-2 flex gap-2">
+            <div className="pt-4 flex gap-2.5">
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="py-3.5 px-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 font-bold text-xs"
+                className="py-4 px-5 rounded-2xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 font-bold text-xs active:scale-95 transition-all cursor-pointer"
               >
                 {t('btn.back', undefined, 'Back')}
               </button>
@@ -666,14 +675,14 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 onClick={handleFinalSubmit}
                 disabled={isSubmitting}
                 id="btn-confirm-add-expense"
-                className="flex-1 py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] disabled:opacity-50 text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-4 px-6 rounded-2xl bg-[#6552FF] hover:bg-[#523EFA] disabled:opacity-50 text-white text-sm font-extrabold shadow-lg shadow-[#6552FF]/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isSubmitting ? (
                   <span>{t('expense.saving', undefined, 'Recording expense...')}</span>
                 ) : (
                   <>
                     <Check className="w-4 h-4 stroke-[3]" />
-                    <span>{t('expense.confirm_save', undefined, 'Add Expense')}</span>
+                    <span>{t('expense.confirm_save', undefined, 'Record & Add Expense')}</span>
                   </>
                 )}
               </button>
@@ -696,7 +705,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 {title}
               </h2>
               <p className="text-4xl font-extrabold text-neutral-900 dark:text-white tabular-nums tracking-tight mt-2">
-                ${parsedTotal.toFixed(2)}
+                ${(parsedTotal || 0).toFixed(2)}
               </p>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                 {t('expense.paid_by', undefined, 'Paid by')} {payerMember.name} • {currentGroup.name}
@@ -725,9 +734,9 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 type="button"
                 onClick={onClose}
                 id="btn-success-view-group"
-                className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all"
+                className="w-full py-4 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-sm font-extrabold shadow-lg shadow-neutral-950/15 dark:shadow-white/10 active:scale-[0.98] transition-all cursor-pointer"
               >
-                {t('expense.view_group_summary', undefined, 'Back to Group')}
+                {t('expense.view_group_summary', undefined, 'Done')}
               </button>
             </div>
           </div>

@@ -8,7 +8,8 @@ import {
   WorkspaceType, 
   ActiveTab, 
   ScreenView,
-  SettlementRecord
+  SettlementRecord,
+  PaymentMethod
 } from './types';
 import { 
   INITIAL_GROUPS, 
@@ -23,11 +24,14 @@ import { BottomNavBar } from './components/common/BottomNavBar';
 import { WorkspaceSwitcherModal } from './components/common/WorkspaceSwitcherModal';
 import { CreateGroupModal } from './components/common/CreateGroupModal';
 import { LanguageSwitcherModal } from './components/common/LanguageSwitcherModal';
+import { AddFundsModal } from './components/common/AddFundsModal';
+import { AddPaymentMethodModal } from './components/common/AddPaymentMethodModal';
 import { HomeScreen } from './components/screens/HomeScreen';
 import { GroupsScreen } from './components/screens/GroupsScreen';
 import { GroupDetailScreen } from './components/screens/GroupDetailScreen';
 import { AddExpenseFlow } from './components/screens/AddExpenseFlow';
 import { BalancesScreen } from './components/screens/BalancesScreen';
+import { AnalyticsScreen } from './components/screens/AnalyticsScreen';
 import { SettlementScreen } from './components/screens/SettlementScreen';
 import { FriendsScreen } from './components/screens/FriendsScreen';
 import { NotificationsScreen } from './components/screens/NotificationsScreen';
@@ -52,12 +56,33 @@ export default function App() {
   const [friends, setFriends] = useState<Friend[]>(INITIAL_FRIENDS);
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
   const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
+  const [walletBalance, setWalletBalance] = useState<number>(425.50);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+    {
+      id: 'pm-1',
+      type: 'card',
+      title: 'Visa ending in 4242',
+      last4: '4242',
+      brand: 'visa',
+      expiry: '09/27',
+      isDefault: true,
+    },
+    {
+      id: 'pm-2',
+      type: 'apple_pay',
+      title: 'Apple Pay',
+      brand: 'apple',
+      isDefault: false,
+    },
+  ]);
 
   // Modals
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
+  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
+  const [isAddPaymentMethodModalOpen, setIsAddPaymentMethodModalOpen] = useState(false);
   const [preselectedGroupId, setPreselectedGroupId] = useState<string | undefined>(undefined);
 
   // Settlement flow params
@@ -90,7 +115,8 @@ export default function App() {
   };
 
   const handleOpenAddExpense = (groupId?: string) => {
-    setPreselectedGroupId(groupId || groups[0]?.id);
+    const targetGroup = groupId || groups[0]?.id;
+    setPreselectedGroupId(targetGroup);
     setIsAddExpenseOpen(true);
   };
 
@@ -115,7 +141,7 @@ export default function App() {
     const newNotif: AppNotification = {
       id: `notif-${Date.now()}`,
       title: `${newExpense.title} added`,
-      body: `You recorded $${newExpense.amount.toFixed(2)} in ${groups.find(g => g.id === newExpense.groupId)?.name || 'group'}.`,
+      body: `You recorded $${(newExpense.amount || 0).toFixed(2)} in ${groups.find(g => g.id === newExpense.groupId)?.name || 'group'}.`,
       timestamp: 'Just now',
       isRead: false,
       type: 'expense_added',
@@ -131,7 +157,7 @@ export default function App() {
     const newNotif: AppNotification = {
       id: `notif-${Date.now()}`,
       title: 'Settlement recorded',
-      body: `Recorded $${record.amount.toFixed(2)} settlement between ${MOCK_MEMBERS[record.fromUserId]?.name || 'Member'} and ${MOCK_MEMBERS[record.toUserId]?.name || 'Member'}.`,
+      body: `Recorded $${(record.amount || 0).toFixed(2)} settlement between ${MOCK_MEMBERS[record.fromUserId]?.name || 'Member'} and ${MOCK_MEMBERS[record.toUserId]?.name || 'Member'}.`,
       timestamp: 'Just now',
       isRead: false,
       type: 'settlement_recorded',
@@ -160,12 +186,36 @@ export default function App() {
     }));
   };
 
+  const handleAddFunds = (amount: number) => {
+    setWalletBalance((prev) => prev + (amount || 0));
+    const newNotif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      title: 'Wallet Funded',
+      body: `$${(amount || 0).toFixed(2)} added to your Balanzo Wallet.`,
+      timestamp: 'Just now',
+      isRead: false,
+      type: 'settlement_recorded',
+      workspaceContext: workspace,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+  };
+
+  const handlePaymentMethodAdded = (pm: PaymentMethod) => {
+    setPaymentMethods((prev) => {
+      if (pm.isDefault) {
+        return [pm, ...prev.map((p) => ({ ...p, isDefault: false }))];
+      }
+      return [pm, ...prev];
+    });
+  };
+
   const handleResetData = () => {
     setGroups(INITIAL_GROUPS);
     setExpenses(INITIAL_EXPENSES);
     setFriends(INITIAL_FRIENDS);
     setNotifications(INITIAL_NOTIFICATIONS);
     setProfile(INITIAL_PROFILE);
+    setWalletBalance(425.50);
     setScreenView({ type: 'home' });
     setActiveTab('home');
   };
@@ -187,164 +237,17 @@ export default function App() {
         isGalleryMode={isGalleryMode}
         onToggleGalleryMode={() => setIsGalleryMode(!isGalleryMode)}
         onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-      >
-        {isGalleryMode ? (
-          <DesignGalleryView
-            onSwitchToInteractive={(screen) => {
-              setIsGalleryMode(false);
-              if (screen) setScreenView({ type: screen as any });
-            }}
-            isDark={isDarkMode}
-          />
-        ) : (
-          <div className="flex-1 flex flex-col min-h-full">
-            {/* Header (Top navigation on main tabs) */}
-            {screenView.type !== 'group-detail' &&
-              screenView.type !== 'plan-usage' &&
-              screenView.type !== 'settings' && (
-                <Header
-                  workspace={workspace}
-                  onOpenWorkspaceSwitcher={() => setIsWorkspaceModalOpen(true)}
-                  onOpenNotifications={() => setScreenView({ type: 'notifications' })}
-                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-                  unreadCount={unreadNotifCount}
-                  showBack={screenView.type === 'notifications' || screenView.type === 'balances'}
-                  title={
-                    screenView.type === 'notifications'
-                      ? t('notifications.title', undefined, 'Notifications')
-                      : screenView.type === 'balances'
-                      ? t('balances.title', undefined, 'Balances')
-                      : undefined
-                  }
-                  onBack={() => setScreenView({ type: 'home' })}
-                />
-              )}
-
-            {/* SCREEN CONTENT ROUTER */}
-            <div className="flex-1">
-              {screenView.type === 'home' && (
-                <HomeScreen
-                  groups={groups}
-                  expenses={expenses}
-                  workspace={workspace}
-                  onOpenAddExpense={() => handleOpenAddExpense()}
-                  onOpenSettleUp={() => setSettlementParams({})}
-                  onOpenScanReceipt={() => setScreenView({ type: 'plan-usage' })}
-                  onSelectGroup={(groupId) => {
-                    if (groupId === 'all') handleTabChange('groups');
-                    else setScreenView({ type: 'group-detail', groupId });
-                  }}
-                  onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
-                  onOpenBalances={() => setScreenView({ type: 'balances' })}
-                />
-              )}
-
-              {screenView.type === 'groups' && (
-                <GroupsScreen
-                  groups={groups}
-                  onSelectGroup={(groupId) => setScreenView({ type: 'group-detail', groupId })}
-                  onCreateGroup={() => setIsCreateGroupModalOpen(true)}
-                />
-              )}
-
-              {screenView.type === 'group-detail' && (
-                <GroupDetailScreen
-                  group={selectedGroup}
-                  expenses={expenses}
-                  onBack={() => setScreenView({ type: 'groups' })}
-                  onAddExpense={() => handleOpenAddExpense(selectedGroup.id)}
-                  onSettleUp={(memberId) =>
-                    setSettlementParams({
-                      fromUserId: 'user-nijat',
-                      toUserId: memberId || selectedGroup.members[1]?.id,
-                      groupId: selectedGroup.id,
-                    })
-                  }
-                  initialTab={screenView.initialTab}
-                />
-              )}
-
-              {screenView.type === 'balances' && (
-                <BalancesScreen
-                  onBack={() => setScreenView({ type: 'home' })}
-                  onRecordSettlement={(fromId, toId, amount) =>
-                    setSettlementParams({ fromUserId: fromId, toUserId: toId, amount })
-                  }
-                />
-              )}
-
-              {screenView.type === 'friends' && (
-                <FriendsScreen
-                  friends={friends}
-                  onAddFriendEmail={handleAddFriendEmail}
-                  onSettleFriend={(friendId) =>
-                    setSettlementParams({
-                      fromUserId: 'user-nijat',
-                      toUserId: friendId,
-                    })
-                  }
-                />
-              )}
-
-              {screenView.type === 'notifications' && (
-                <NotificationsScreen
-                  notifications={notifications}
-                  onBack={() => setScreenView({ type: 'home' })}
-                  onSelectNotification={(notif) => {
-                    setNotifications((prev) =>
-                      prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
-                    );
-                    if (notif.workspaceContext && notif.workspaceContext !== workspace) {
-                      setWorkspace(notif.workspaceContext);
-                    }
-                    if (notif.groupId) {
-                      setScreenView({ type: 'group-detail', groupId: notif.groupId });
-                    }
-                  }}
-                  onMarkAllRead={() =>
-                    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
-                  }
-                />
-              )}
-
-              {screenView.type === 'profile' && (
-                <ProfileScreen
-                  profile={profile}
-                  onUpdateProfile={(updated) => setProfile((p) => ({ ...p, ...updated }))}
-                  onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
-                  onOpenSettings={() => setScreenView({ type: 'settings' })}
-                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-                />
-              )}
-
-              {screenView.type === 'plan-usage' && (
-                <PlanUsageScreen
-                  profile={profile}
-                  onBack={() => setScreenView({ type: 'profile' })}
-                />
-              )}
-
-              {screenView.type === 'settings' && (
-                <SettingsScreen 
-                  onBack={() => setScreenView({ type: 'profile' })} 
-                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
-                />
-              )}
-            </div>
-
-            {/* Bottom Nav Bar on primary root tabs */}
-            {(screenView.type === 'home' ||
-              screenView.type === 'groups' ||
-              screenView.type === 'friends' ||
-              screenView.type === 'profile') && (
-              <BottomNavBar
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-                onOpenAddExpense={() => handleOpenAddExpense()}
-                workspace={workspace}
-              />
-            )}
-
+        hasActiveModal={
+          isWorkspaceModalOpen ||
+          isCreateGroupModalOpen ||
+          isAddExpenseOpen ||
+          isLanguageModalOpen ||
+          isAddFundsModalOpen ||
+          isAddPaymentMethodModalOpen ||
+          settlementParams !== null
+        }
+        modals={
+          <>
             {/* 3-Step Add Expense Wizard Flow */}
             {isAddExpenseOpen && (
               <AddExpenseFlow
@@ -390,6 +293,233 @@ export default function App() {
               isOpen={isLanguageModalOpen}
               onClose={() => setIsLanguageModalOpen(false)}
             />
+
+            {/* Add Funds Modal */}
+            <AddFundsModal
+              isOpen={isAddFundsModalOpen}
+              onClose={() => setIsAddFundsModalOpen(false)}
+              currentBalance={walletBalance}
+              paymentMethods={paymentMethods}
+              onAddFunds={handleAddFunds}
+              onOpenAddPaymentMethod={() => {
+                setIsAddFundsModalOpen(false);
+                setIsAddPaymentMethodModalOpen(true);
+              }}
+            />
+
+            {/* Add Payment Method Modal */}
+            <AddPaymentMethodModal
+              isOpen={isAddPaymentMethodModalOpen}
+              onClose={() => setIsAddPaymentMethodModalOpen(false)}
+              onPaymentMethodAdded={handlePaymentMethodAdded}
+            />
+          </>
+        }
+      >
+        {isGalleryMode ? (
+          <DesignGalleryView
+            onSwitchToInteractive={(screen) => {
+              setIsGalleryMode(false);
+              if (screen) setScreenView({ type: screen as any });
+            }}
+            isDark={isDarkMode}
+          />
+        ) : (
+          <div className="flex-1 flex flex-col min-h-full">
+            {/* Header (Top navigation on main tabs) */}
+            {screenView.type !== 'group-detail' &&
+              screenView.type !== 'plan-usage' &&
+              screenView.type !== 'settings' &&
+              screenView.type !== 'add-expense' && (
+                <Header
+                  workspace={workspace}
+                  onOpenWorkspaceSwitcher={() => setIsWorkspaceModalOpen(true)}
+                  onOpenNotifications={() => setScreenView({ type: 'notifications' })}
+                  unreadCount={unreadNotifCount}
+                  showBack={
+                    screenView.type === 'notifications' ||
+                    screenView.type === 'balances' ||
+                    screenView.type === 'analytics' ||
+                    screenView.type === 'friends'
+                  }
+                  title={
+                    screenView.type === 'notifications'
+                      ? t('notifications.title', undefined, 'Notifications')
+                      : screenView.type === 'balances'
+                      ? t('balances.title', undefined, 'Balances & Wallet')
+                      : screenView.type === 'analytics'
+                      ? 'Expense Analytics'
+                      : undefined
+                  }
+                  onBack={() => {
+                    if (screenView.type === 'analytics') {
+                      setScreenView({ type: 'profile' });
+                    } else {
+                      setScreenView({ type: 'home' });
+                    }
+                  }}
+                />
+              )}
+
+            {/* SCREEN CONTENT ROUTER */}
+            <div className="flex-1">
+              {screenView.type === 'home' && (
+                <HomeScreen
+                  groups={groups}
+                  expenses={expenses}
+                  workspace={workspace}
+                  walletBalance={walletBalance}
+                  onOpenAddExpense={() => handleOpenAddExpense()}
+                  onOpenSettleUp={() => setSettlementParams({})}
+                  onOpenScanReceipt={() => setScreenView({ type: 'plan-usage' })}
+                  onSelectGroup={(groupId) => {
+                    if (groupId === 'all') handleTabChange('groups');
+                    else setScreenView({ type: 'group-detail', groupId });
+                  }}
+                  onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
+                  onOpenBalances={() => setScreenView({ type: 'balances' })}
+                  onOpenAnalytics={() => setScreenView({ type: 'analytics' })}
+                  onOpenAddFunds={() => setIsAddFundsModalOpen(true)}
+                  onOpenAddPaymentMethod={() => setIsAddPaymentMethodModalOpen(true)}
+                />
+              )}
+
+              {screenView.type === 'groups' && (
+                <GroupsScreen
+                  groups={groups}
+                  onSelectGroup={(groupId) => setScreenView({ type: 'group-detail', groupId })}
+                  onCreateGroup={() => setIsCreateGroupModalOpen(true)}
+                />
+              )}
+
+              {screenView.type === 'group-detail' && (
+                <GroupDetailScreen
+                  group={selectedGroup}
+                  expenses={expenses}
+                  onBack={() => setScreenView({ type: 'groups' })}
+                  onAddExpense={() => handleOpenAddExpense(selectedGroup.id)}
+                  onSettleUp={(memberId) =>
+                    setSettlementParams({
+                      fromUserId: 'user-nijat',
+                      toUserId: memberId || selectedGroup.members[1]?.id,
+                      groupId: selectedGroup.id,
+                    })
+                  }
+                  initialTab={screenView.initialTab}
+                />
+              )}
+
+              {screenView.type === 'analytics' && (
+                <AnalyticsScreen
+                  expenses={expenses}
+                  groups={groups}
+                  onOpenAddExpense={() => handleOpenAddExpense()}
+                  onOpenBalances={() => setScreenView({ type: 'balances' })}
+                />
+              )}
+
+              {screenView.type === 'add-expense' && (
+                <AddExpenseFlow
+                  groups={groups}
+                  preselectedGroupId={screenView.preselectedGroupId || preselectedGroupId}
+                  onClose={() => {
+                    setActiveTab('home');
+                    setScreenView({ type: 'home' });
+                  }}
+                  onExpenseAdded={(newExp) => {
+                    handleExpenseAdded(newExp);
+                    setActiveTab('home');
+                    setScreenView({ type: 'home' });
+                  }}
+                />
+              )}
+
+              {screenView.type === 'balances' && (
+                <BalancesScreen
+                  walletBalance={walletBalance}
+                  onBack={() => setScreenView({ type: 'home' })}
+                  onRecordSettlement={(fromId, toId, amount) =>
+                    setSettlementParams({ fromUserId: fromId, toUserId: toId, amount })
+                  }
+                  onOpenAddFunds={() => setIsAddFundsModalOpen(true)}
+                />
+              )}
+
+              {screenView.type === 'friends' && (
+                <FriendsScreen
+                  friends={friends}
+                  onAddFriendEmail={handleAddFriendEmail}
+                  onSettleFriend={(friendId) =>
+                    setSettlementParams({
+                      fromUserId: 'user-nijat',
+                      toUserId: friendId,
+                    })
+                  }
+                />
+              )}
+
+              {screenView.type === 'notifications' && (
+                <NotificationsScreen
+                  notifications={notifications}
+                  onBack={() => setScreenView({ type: 'home' })}
+                  onSelectNotification={(notif) => {
+                    setNotifications((prev) =>
+                      prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
+                    );
+                    if (notif.workspaceContext && notif.workspaceContext !== workspace) {
+                      setWorkspace(notif.workspaceContext);
+                    }
+                    if (notif.groupId) {
+                      setScreenView({ type: 'group-detail', groupId: notif.groupId });
+                    }
+                  }}
+                  onMarkAllRead={() =>
+                    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+                  }
+                />
+              )}
+
+              {screenView.type === 'profile' && (
+                <ProfileScreen
+                  profile={profile}
+                  walletBalance={walletBalance}
+                  onUpdateProfile={(updated) => setProfile((p) => ({ ...p, ...updated }))}
+                  onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
+                  onOpenSettings={() => setScreenView({ type: 'settings' })}
+                  onOpenAnalytics={() => setScreenView({ type: 'analytics' })}
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+                  onOpenAddFunds={() => setIsAddFundsModalOpen(true)}
+                  onOpenAddPaymentMethod={() => setIsAddPaymentMethodModalOpen(true)}
+                />
+              )}
+
+              {screenView.type === 'plan-usage' && (
+                <PlanUsageScreen
+                  profile={profile}
+                  onBack={() => setScreenView({ type: 'profile' })}
+                />
+              )}
+
+              {screenView.type === 'settings' && (
+                <SettingsScreen 
+                  onBack={() => setScreenView({ type: 'profile' })} 
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+                />
+              )}
+            </div>
+
+            {/* Bottom Nav Bar on primary root tabs */}
+            {(screenView.type === 'home' ||
+              screenView.type === 'groups' ||
+              screenView.type === 'friends' ||
+              screenView.type === 'profile') && (
+              <BottomNavBar
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                onOpenAddExpense={() => handleOpenAddExpense()}
+                workspace={workspace}
+              />
+            )}
           </div>
         )}
       </MobileFrame>

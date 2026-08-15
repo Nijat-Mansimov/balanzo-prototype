@@ -101,6 +101,26 @@ export interface AppNotification {
   expenseId?: string;
 }
 
+export interface PaymentMethod {
+  id: string;
+  type: 'card' | 'apple_pay' | 'google_pay' | 'bank';
+  title: string;
+  last4?: string;
+  brand?: 'visa' | 'mastercard' | 'amex' | 'apple' | 'google' | 'bank';
+  expiry?: string;
+  isDefault?: boolean;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: 'topup' | 'settlement_payout' | 'expense_payment';
+  amount: number;
+  currency: string;
+  date: string;
+  title: string;
+  paymentMethodTitle?: string;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -113,13 +133,15 @@ export interface UserProfile {
   plan: 'free' | 'premium' | 'trip_pass';
   groupsUsed: number;
   groupsLimit: number;
+  walletBalance: number;
 }
 
-export type ActiveTab = 'home' | 'groups' | 'add' | 'friends' | 'profile';
+export type ActiveTab = 'home' | 'groups' | 'friends' | 'profile';
 
 export type ScreenView = 
   | { type: 'home' }
   | { type: 'groups' }
+  | { type: 'analytics' }
   | { type: 'group-detail'; groupId: string; initialTab?: 'expenses' | 'balances' | 'settle' | 'activity' }
   | { type: 'add-expense'; preselectedGroupId?: string }
   | { type: 'balances'; groupId?: string }

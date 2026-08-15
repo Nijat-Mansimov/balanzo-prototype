@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Compass, Home, Sparkles, ChevronRight, Users } from 'lucide-react';
+import { Plus, Compass, Building2, ChevronRight, Users, Search, X } from 'lucide-react';
 import { Group } from '../../types';
 import { AvatarStack } from '../common/AvatarStack';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -17,32 +17,57 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
 }) => {
   const { t } = useLanguage();
   const [filter, setFilter] = useState<'all' | 'trip' | 'home'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredGroups = groups.filter((g) => {
-    if (filter === 'all') return true;
-    return g.type === filter;
+    const matchesFilter = filter === 'all' || g.type === filter;
+    const matchesSearch =
+      g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (g.inferredDestination && g.inferredDestination.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesFilter && matchesSearch;
   });
 
   return (
     <div className="space-y-4 px-4 pb-20 pt-1 animate-in fade-in duration-300">
-      {/* Header title & Create action */}
+      {/* Header title & Instagram-style Transparent + Action */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-black text-neutral-900 dark:text-white tracking-tight">
             {t('groups.title', undefined, 'Groups')}
           </h1>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
             {groups.length} {t('groups.active_circles', undefined, 'active circles')}
           </p>
         </div>
         <button
           onClick={onCreateGroup}
           id="btn-create-group"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6552FF] text-white text-xs font-bold shadow-sm shadow-[#6552FF]/20 active:scale-95 transition-all"
+          className="w-10 h-10 -mr-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-white flex items-center justify-center active:scale-90 transition-all"
+          aria-label={t('groups.create_group', undefined, 'Create New Group')}
+          title={t('groups.create_group', undefined, 'Create New Group')}
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>{t('groups.create_group', undefined, 'New Group')}</span>
+          <Plus className="w-6 h-6 stroke-[2.2]" />
         </button>
+      </div>
+
+      {/* Search Filter for Groups */}
+      <div className="relative">
+        <Search className="w-4 h-4 absolute left-3.5 top-3 text-neutral-400" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search groups or destinations..."
+          className="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 text-xs font-medium text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#6552FF]/30 shadow-xs"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="absolute right-3 top-2.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Segmented Filter Control */}
@@ -51,8 +76,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           onClick={() => setFilter('all')}
           className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             filter === 'all'
-              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-xs'
+              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'
           }`}
         >
           {t('groups.filter_all', undefined, 'All')} ({groups.length})
@@ -61,8 +86,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           onClick={() => setFilter('trip')}
           className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             filter === 'trip'
-              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-xs'
+              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'
           }`}
         >
           {t('groups.filter_trips', undefined, 'Trips')} ({groups.filter((g) => g.type === 'trip').length})
@@ -71,8 +96,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           onClick={() => setFilter('home')}
           className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             filter === 'home'
-              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
+              ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-xs'
+              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'
           }`}
         >
           {t('groups.filter_home', undefined, 'Home & Shared')}
@@ -91,7 +116,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               <div
                 key={group.id}
                 onClick={() => onSelectGroup(group.id)}
-                className="relative overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all cursor-pointer group shadow-sm"
+                className="relative overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all cursor-pointer group shadow-xs"
               >
                 <div className="relative h-32 w-full overflow-hidden bg-neutral-900">
                   {group.coverImage ? (
@@ -112,7 +137,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   {/* Destination & Inferred date range pill */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                     <span className="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-[11px] font-semibold text-white border border-white/10 flex items-center gap-1.5">
-                      <Compass className="w-3.5 h-3.5 text-[#FF8A3D]" />
+                      <Compass className="w-3.5 h-3.5 text-[#FF8A3D] stroke-[2]" />
                       {group.inferredDestination}
                     </span>
                     <span className="text-[11px] text-white/90 font-medium px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm">
@@ -122,11 +147,11 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
 
                   {/* Group Name & spending */}
                   <div className="absolute bottom-3 left-4 right-4">
-                    <h3 className="text-lg font-bold text-white tracking-tight leading-tight">
+                    <h3 className="text-lg font-black text-white tracking-tight leading-tight">
                       {group.name}
                     </h3>
-                    <p className="text-xs text-white/80">
-                      ${group.totalExpenses?.toFixed(2)} {t('groups.total_spent', undefined, 'total expenses')}
+                    <p className="text-xs text-white/80 font-medium">
+                      ${(group.totalExpenses || 0).toFixed(2)} {t('groups.total_spent', undefined, 'total expenses')}
                     </p>
                   </div>
                 </div>
@@ -140,14 +165,14 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   </div>
 
                   <div className="text-right">
-                    <div className="text-[10px] text-neutral-400 font-medium">
+                    <div className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
                       {isPositive ? t('home.you_are_owed', undefined, 'You are owed') : t('home.you_owe', undefined, 'You owe')}
                     </div>
                     <div
-                      className={`text-sm font-extrabold tabular-nums ${
+                      className={`text-sm font-black tabular-nums ${
                         isPositive
-                          ? 'text-[#16A34A] dark:text-emerald-400'
-                          : 'text-[#9C5317] dark:text-amber-400'
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-amber-600 dark:text-amber-400'
                       }`}
                     >
                       {isPositive ? '+' : ''}${Math.abs(group.yourBalance || 0).toFixed(2)}
@@ -163,11 +188,11 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
             <div
               key={group.id}
               onClick={() => onSelectGroup(group.id)}
-              className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 hover:border-neutral-300 dark:hover:border-neutral-600 flex items-center justify-between cursor-pointer group shadow-sm transition-all"
+              className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 flex items-center justify-between cursor-pointer group shadow-xs transition-all"
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#6552FF] flex items-center justify-center font-bold">
-                  <Home className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 flex items-center justify-center font-bold">
+                  <Building2 className="w-5 h-5 stroke-[2]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-neutral-900 dark:text-white leading-tight">
@@ -175,8 +200,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
                     <AvatarStack members={group.members} size="xs" max={3} />
-                    <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                      ${group.totalExpenses?.toFixed(2)} {t('groups.total_spent', undefined, 'total')}
+                    <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
+                      ${(group.totalExpenses || 0).toFixed(2)} {t('groups.total_spent', undefined, 'total')}
                     </span>
                   </div>
                 </div>
@@ -184,10 +209,10 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
 
               <div className="flex items-center gap-2">
                 <div className="text-right">
-                  <span className="text-[10px] text-neutral-400 font-medium block">
+                  <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium block">
                     {t('activity.filter_all', undefined, 'Status')}
                   </span>
-                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">
+                  <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
                     {t('settlement.settled_up', undefined, 'All settled')}
                   </span>
                 </div>
@@ -199,8 +224,8 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
 
         {filteredGroups.length === 0 && (
           <div className="text-center py-12 px-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-[#6552FF] flex items-center justify-center mx-auto mb-3">
-              <Users className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 flex items-center justify-center mx-auto mb-3">
+              <Users className="w-6 h-6 stroke-[2]" />
             </div>
             <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
               {t('groups.no_groups', undefined, 'No groups in this filter')}
@@ -214,3 +239,4 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
     </div>
   );
 };
+

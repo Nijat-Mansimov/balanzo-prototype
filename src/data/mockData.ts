@@ -1,4 +1,4 @@
-import { User, Member, Group, Expense, Friend, AppNotification, UserProfile, PairwiseBalance } from '../types';
+import { User, Member, Group, Expense, Friend, AppNotification, UserProfile, PairwiseBalance, PaymentMethod } from '../types';
 
 export const CURRENT_USER: User = {
   id: 'user-nijat',
@@ -367,6 +367,34 @@ export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   },
 ];
 
+export const INITIAL_PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    id: 'pm-apple-pay',
+    type: 'apple_pay',
+    title: 'Apple Pay',
+    brand: 'apple',
+    isDefault: true,
+  },
+  {
+    id: 'pm-visa-4242',
+    type: 'card',
+    title: 'Visa ending in 4242',
+    last4: '4242',
+    brand: 'visa',
+    expiry: '12/28',
+    isDefault: false,
+  },
+  {
+    id: 'pm-mastercard-8821',
+    type: 'card',
+    title: 'Mastercard ending in 8821',
+    last4: '8821',
+    brand: 'mastercard',
+    expiry: '09/27',
+    isDefault: false,
+  },
+];
+
 export const INITIAL_PROFILE: UserProfile = {
   id: 'user-nijat',
   name: 'Nijat Mansimov',
@@ -379,4 +407,5 @@ export const INITIAL_PROFILE: UserProfile = {
   plan: 'free',
   groupsUsed: 3,
   groupsLimit: 3,
+  walletBalance: 150.00,
 };

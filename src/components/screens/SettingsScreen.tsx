@@ -35,10 +35,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-black text-neutral-900 dark:text-white tracking-tight">
             {t('settings.title', undefined, 'Settings & Security')}
           </h1>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
             {t('settings.subtitle', undefined, 'Account access & platform trust')}
           </p>
         </div>
@@ -50,14 +50,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {t('settings.language_section', undefined, 'Language & Internationalization')}
         </h2>
 
-        <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
+        <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
           <button
             onClick={onOpenLanguageModal}
             id="btn-settings-language"
             className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 flex items-center justify-center text-base">
                 {currentLanguageOption.flag}
               </div>
               <div>
@@ -65,17 +65,17 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   <span className="text-xs font-bold text-neutral-900 dark:text-white block">
                     {t('settings.current_language', undefined, 'Current Language')}
                   </span>
-                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#6552FF]/10 text-[#6552FF] dark:text-indigo-300 font-bold">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#6552FF]/10 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-300 font-bold">
                     {currentLanguageOption.nativeName}
                   </span>
                 </div>
-                <span className="text-[11px] text-neutral-500">
+                <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
                   {currentLanguageOption.name} ({currentLanguageOption.localeTag})
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-[#6552FF] font-semibold">
+              <span className="text-[11px] text-[#6552FF] dark:text-indigo-300 font-bold">
                 {t('btn.edit', undefined, 'Edit')}
               </span>
               <ChevronRight className="w-4 h-4 text-neutral-400" />
@@ -90,7 +90,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {t('settings.security_section', undefined, 'Security')}
         </h2>
 
-        <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
+        <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
           <button
             onClick={() => setIsPasswordModalOpen(true)}
             className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
@@ -103,7 +103,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
                   {t('settings.change_password', undefined, 'Change Password')}
                 </span>
-                <span className="text-[11px] text-neutral-500">
+                <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
                   {t('settings.change_password_desc', undefined, 'Send reset link to your email')}
                 </span>
               </div>
@@ -119,14 +119,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {t('settings.trust_legal_section', undefined, 'Trust & Legal')}
         </h2>
 
-        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
+        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
           {/* Never moves money reassurance row */}
           <div className="p-4 space-y-1">
             <div className="flex items-center gap-2 text-xs font-bold text-neutral-900 dark:text-white">
-              <Shield className="w-4 h-4 text-[#6552FF]" />
+              <Shield className="w-4 h-4 text-[#6552FF] dark:text-indigo-400" />
               <span>{t('settings.never_moves_money', undefined, 'Balanzo never moves money')}</span>
             </div>
-            <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-relaxed">
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-relaxed font-medium">
               {t('settings.never_moves_money_desc', undefined, 'Balanzo is an expense tracking and relationship management system. It does not hold, transfer, or process real funds. All payments occur externally.')}
             </p>
           </div>
@@ -146,7 +146,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           {t('settings.session_section', undefined, 'Session')}
         </h2>
 
-        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
+        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
           <button
             onClick={() => {}}
             className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
@@ -179,14 +179,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               </h3>
               <button
                 onClick={() => setIsPasswordModalOpen(false)}
-                className="p-1 rounded-full text-neutral-400 hover:text-neutral-600"
+                className="p-1 rounded-full text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="mt-4 space-y-3">
-              <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+              <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
                 {t('settings.reset_link_intro', undefined, "We'll send a link to")} <strong className="text-neutral-900 dark:text-white">{CURRENT_USER.email}</strong> {t('settings.reset_link_outro', undefined, "to set a new password.")}
               </p>
 

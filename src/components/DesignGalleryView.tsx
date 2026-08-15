@@ -17,7 +17,8 @@ import {
   Utensils,
   Car,
   Building,
-  CheckCircle2
+  CheckCircle2,
+  Plus
 } from 'lucide-react';
 import { Avatar } from './common/Avatar';
 import { AvatarStack } from './common/AvatarStack';
@@ -150,7 +151,7 @@ export const DesignGalleryView: React.FC<DesignGalleryViewProps> = ({
             <div className="p-3 space-y-3 flex-1 overflow-hidden">
               <div className="flex justify-between items-center">
                 <h2 className="text-sm font-extrabold">Groups</h2>
-                <span className="text-[10px] bg-[#6552FF] text-white px-2 py-0.5 rounded-full font-bold">+ New</span>
+                <span className="w-6 h-6 rounded-full bg-[#6552FF] text-white flex items-center justify-center font-bold text-xs shadow-xs">+</span>
               </div>
 
               {/* Segmented control */}
@@ -235,7 +236,7 @@ export const DesignGalleryView: React.FC<DesignGalleryViewProps> = ({
             </div>
 
             <div className="p-3 bg-white dark:bg-neutral-800 border-t flex gap-2">
-              <button className="flex-1 py-2 bg-[#6552FF] text-white rounded-xl text-xs font-bold">+ Add Expense</button>
+              <button className="flex-1 py-2 bg-[#6552FF] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1"><Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Expense</button>
               <button className="py-2 px-3 border rounded-xl text-xs font-bold">Settle</button>
             </div>
           </div>
