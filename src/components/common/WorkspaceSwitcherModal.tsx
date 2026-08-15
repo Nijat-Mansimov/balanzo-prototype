@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, Building2, User, Plus, X, Sparkles } from 'lucide-react';
 import { WorkspaceType } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface WorkspaceSwitcherModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const WorkspaceSwitcherModal: React.FC<WorkspaceSwitcherModalProps> = ({
   onSelectWorkspace,
   onCreateOrgClick,
 }) => {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -30,10 +32,10 @@ export const WorkspaceSwitcherModal: React.FC<WorkspaceSwitcherModalProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700/60">
           <div>
             <h2 id="workspace-modal-title" className="text-base font-bold text-neutral-900 dark:text-white">
-              Workspaces
+              {t('workspace.title', undefined, 'Workspaces')}
             </h2>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              Switch between personal & team spending
+              {t('workspace.subtitle', undefined, 'Switch between personal & team spending')}
             </p>
           </div>
           <button
@@ -64,10 +66,10 @@ export const WorkspaceSwitcherModal: React.FC<WorkspaceSwitcherModalProps> = ({
               </div>
               <div>
                 <p className="text-sm font-semibold text-neutral-900 dark:text-white">
-                  Personal
+                  {t('workspace.personal', undefined, 'Personal')}
                 </p>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  Friends, trips & roommates
+                  {t('workspace.personal_desc', undefined, 'Friends, trips & roommates')}
                 </p>
               </div>
             </div>
@@ -104,7 +106,7 @@ export const WorkspaceSwitcherModal: React.FC<WorkspaceSwitcherModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  Offsites, client dinners & SaaS splits
+                  {t('workspace.org_desc', undefined, 'Offsites, client dinners & SaaS splits')}
                 </p>
               </div>
             </div>
@@ -125,7 +127,7 @@ export const WorkspaceSwitcherModal: React.FC<WorkspaceSwitcherModalProps> = ({
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:text-[#6552FF] dark:hover:text-[#6552FF] transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Create new organization
+            {t('workspace.create_org', undefined, 'Create new organization')}
           </button>
         </div>
       </div>

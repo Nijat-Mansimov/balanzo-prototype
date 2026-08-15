@@ -3,6 +3,7 @@ import { X, Plus, Compass, Home, Calendar, Users, Sparkles, Check } from 'lucide
 import { Group, Member } from '../../types';
 import { CURRENT_USER, MOCK_MEMBERS } from '../../data/mockData';
 import { Avatar } from './Avatar';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
   onGroupCreated,
 }) => {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [type, setType] = useState<'trip' | 'home' | 'couple' | 'other'>('trip');
   const [currency, setCurrency] = useState('USD');
@@ -72,7 +74,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       <div className="w-full bg-white dark:bg-neutral-800 rounded-t-3xl p-5 shadow-2xl border-t border-neutral-200 dark:border-neutral-700 max-h-[90%] overflow-y-auto animate-in slide-in-from-bottom-5 duration-200">
         <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
           <h2 className="text-base font-bold text-neutral-900 dark:text-white">
-            Create New Group
+            {t('groups.create_group', undefined, 'Create New Group')}
           </h2>
           <button
             onClick={onClose}
@@ -86,13 +88,13 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           {/* Group Name */}
           <div>
             <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-              Group Name
+              {t('groups.modal_name_label', undefined, 'Group Name')}
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Barcelona 2026, Lake House"
+              placeholder={t('groups.modal_name_placeholder', undefined, 'e.g. Barcelona 2026, Lake House')}
               required
               className="w-full p-3 rounded-2xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 text-xs font-semibold text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6552FF]/30"
             />
@@ -101,28 +103,28 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           {/* Group Type */}
           <div>
             <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-              Group Type
+              {t('groups.modal_type_label', undefined, 'Group Type')}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { id: 'trip', label: 'Trip & Travel', icon: Compass },
-                { id: 'home', label: 'Home & Flat', icon: Home },
-                { id: 'other', label: 'Event / Other', icon: Calendar },
-              ].map((t) => {
-                const Icon = t.icon;
+                { id: 'trip', label: t('groups.type_trip', undefined, 'Trip & Travel'), icon: Compass },
+                { id: 'home', label: t('groups.type_home', undefined, 'Home & Flat'), icon: Home },
+                { id: 'other', label: t('groups.type_other', undefined, 'Event / Other'), icon: Calendar },
+              ].map((tItem) => {
+                const Icon = tItem.icon;
                 return (
                   <button
-                    key={t.id}
+                    key={tItem.id}
                     type="button"
-                    onClick={() => setType(t.id as any)}
+                    onClick={() => setType(tItem.id as any)}
                     className={`p-2.5 rounded-2xl border flex items-center gap-2 text-xs font-semibold transition-all ${
-                      type === t.id
+                      type === tItem.id
                         ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/10 text-[#6552FF] dark:text-white'
                         : 'border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span>{t.label}</span>
+                    <span>{tItem.label}</span>
                   </button>
                 );
               })}
@@ -132,7 +134,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           {/* Members Selection */}
           <div>
             <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-              Select Initial Members ({selectedMemberIds.length})
+              {t('groups.modal_members_label', undefined, 'Select Initial Members')} ({selectedMemberIds.length})
             </label>
             <div className="space-y-1.5 max-h-36 overflow-y-auto no-scrollbar">
               {Object.values(MOCK_MEMBERS).map((m) => {
@@ -169,7 +171,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               type="submit"
               className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-xs font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all"
             >
-              Create Group
+              {t('groups.create_btn', undefined, 'Create Group')}
             </button>
           </div>
         </form>

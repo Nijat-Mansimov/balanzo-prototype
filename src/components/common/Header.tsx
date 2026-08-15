@@ -1,8 +1,9 @@
 import React from 'react';
-import { Bell, ChevronDown, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Bell, ChevronDown, ArrowLeft, ShieldCheck, Globe } from 'lucide-react';
 import { WorkspaceType, ScreenView } from '../../types';
 import { Avatar } from './Avatar';
 import { CURRENT_USER } from '../../data/mockData';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface HeaderProps {
   title?: string;
@@ -14,6 +15,7 @@ interface HeaderProps {
   onOpenNotifications: () => void;
   unreadCount?: number;
   rightAction?: React.ReactNode;
+  onOpenLanguageModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,7 +28,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNotifications,
   unreadCount = 2,
   rightAction,
+  onOpenLanguageModal,
 }) => {
+  const { t, currentLanguageOption } = useLanguage();
+
   return (
     <header className="sticky top-0 z-30 pt-2 pb-3 px-4 bg-neutral-100/90 dark:bg-neutral-900/90 backdrop-blur-md transition-colors">
       <div className="flex items-center justify-between min-h-[44px]">
@@ -70,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <span className="text-xs font-semibold text-neutral-900 dark:text-white flex items-center gap-1">
                   {workspace === 'personal' ? (
-                    'Personal'
+                    t('workspace.personal', undefined, 'Personal')
                   ) : (
                     <>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -88,6 +93,18 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         <div className="flex items-center gap-1.5">
+          {onOpenLanguageModal && (
+            <button
+              onClick={onOpenLanguageModal}
+              id="btn-header-lang"
+              className="p-2 rounded-full hover:bg-neutral-200/70 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors active:scale-95 flex items-center gap-1"
+              aria-label="Change language"
+              title={currentLanguageOption.name}
+            >
+              <span className="text-sm">{currentLanguageOption.flag}</span>
+            </button>
+          )}
+
           {rightAction ? (
             rightAction
           ) : (

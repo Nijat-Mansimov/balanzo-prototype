@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, ArrowDownLeft, Zap, CheckCircle2, ShieldCheck,
 import { PairwiseBalance, Member } from '../../types';
 import { Avatar } from '../common/Avatar';
 import { MOCK_MEMBERS } from '../../data/mockData';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface BalancesScreenProps {
   onBack: () => void;
@@ -13,6 +14,7 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
   onBack,
   onRecordSettlement,
 }) => {
+  const { t } = useLanguage();
   const [useSimplified, setUseSimplified] = useState(true);
 
   // Balances
@@ -45,10 +47,10 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
-            Balances
+            {t('balances.title', undefined, 'Balances')}
           </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            Who owes whom across all groups
+            {t('balances.subtitle', undefined, 'Who owes whom across all groups')}
           </p>
         </div>
       </div>
@@ -58,7 +60,7 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
         <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/30">
           <div className="flex items-center gap-1 text-[11px] font-semibold text-[#9C5317] dark:text-amber-400 mb-1">
             <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>You owe</span>
+            <span>{t('balances.you_owe', undefined, 'You owe')}</span>
           </div>
           <div className="text-xl font-extrabold text-[#9C5317] dark:text-amber-300 tabular-nums">
             ${totalOwe.toFixed(2)}
@@ -68,7 +70,7 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
         <div className="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/30">
           <div className="flex items-center gap-1 text-[11px] font-semibold text-[#16A34A] dark:text-emerald-400 mb-1">
             <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Owed to you</span>
+            <span>{t('balances.owed_to_you', undefined, 'Owed to you')}</span>
           </div>
           <div className="text-xl font-extrabold text-[#16A34A] dark:text-emerald-300 tabular-nums">
             ${totalOwed.toFixed(2)}
@@ -82,10 +84,10 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
           <Sparkles className="w-4 h-4 text-[#6552FF]" />
           <div>
             <p className="text-xs font-bold text-neutral-900 dark:text-white">
-              Debt Simplification Active
+              {t('balances.simplification_active', undefined, 'Debt Simplification Active')}
             </p>
             <p className="text-[10px] text-neutral-500 dark:text-neutral-400">
-              Minimizes total payment hops across mutual groups
+              {t('balances.simplification_desc', undefined, 'Minimizes total payment hops across mutual groups')}
             </p>
           </div>
         </div>
@@ -93,14 +95,14 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
           onClick={() => setUseSimplified(!useSimplified)}
           className="text-xs font-bold text-[#6552FF] hover:underline"
         >
-          {useSimplified ? 'Simplified' : 'Raw'}
+          {useSimplified ? t('balances.simplified_toggle', undefined, 'Simplified') : t('balances.raw_toggle', undefined, 'Raw')}
         </button>
       </div>
 
       {/* You Owe Section */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          You Owe
+          {t('balances.you_owe', undefined, 'You Owe')}
         </h2>
         <div className="space-y-2">
           {youOweList.map((item) => (
@@ -130,13 +132,13 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
                   <div className="text-sm font-extrabold text-[#9C5317] dark:text-amber-400 tabular-nums">
                     ${item.amount.toFixed(2)}
                   </div>
-                  <span className="text-[10px] text-neutral-400">You owe</span>
+                  <span className="text-[10px] text-neutral-400">{t('balances.you_owe', undefined, 'You owe')}</span>
                 </div>
                 <button
                   onClick={() => onRecordSettlement('user-nijat', item.toUser.id, item.amount)}
                   className="px-3 py-1.5 rounded-xl bg-[#6552FF] text-white text-xs font-bold shadow-sm active:scale-95 transition-all"
                 >
-                  Settle
+                  {t('balances.settle_btn', undefined, 'Settle')}
                 </button>
               </div>
             </div>
@@ -147,7 +149,7 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
       {/* Owed To You Section */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          Owed to You
+          {t('balances.owed_to_you', undefined, 'Owed to You')}
         </h2>
         <div className="space-y-2">
           {owedToYouList.map((item) => (
@@ -177,13 +179,13 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
                   <div className="text-sm font-extrabold text-[#16A34A] dark:text-emerald-400 tabular-nums">
                     ${item.amount.toFixed(2)}
                   </div>
-                  <span className="text-[10px] text-neutral-400">Owes you</span>
+                  <span className="text-[10px] text-neutral-400">{t('group_detail.owes_you', undefined, 'Owes you')}</span>
                 </div>
                 <button
                   onClick={() => onRecordSettlement(item.fromUser.id, 'user-nijat', item.amount)}
                   className="px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#16A34A] text-xs font-bold active:scale-95 transition-all"
                 >
-                  Record
+                  {t('group_detail.record_btn', undefined, 'Record')}
                 </button>
               </div>
             </div>
@@ -194,10 +196,10 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
       {/* Reassurance statement */}
       <div className="p-3.5 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-center text-xs text-neutral-500 dark:text-neutral-400">
         <p className="font-semibold text-neutral-700 dark:text-neutral-300">
-          Balanzo never moves money.
+          {t('settings.never_moves_money', undefined, 'Balanzo never moves money.')}
         </p>
         <p className="text-[11px] mt-0.5">
-          Settling records that an external payment (cash, bank, or payment app) has been completed.
+          {t('settings.never_moves_money_desc', undefined, 'Settling records that an external payment (cash, bank, or payment app) has been completed.')}
         </p>
       </div>
     </div>

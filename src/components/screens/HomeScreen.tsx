@@ -20,6 +20,7 @@ import {
 import { Group, Expense, WorkspaceType } from '../../types';
 import { AvatarStack } from '../common/AvatarStack';
 import { SoftPaywallBanner } from '../common/SoftPaywallBanner';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface HomeScreenProps {
   groups: Group[];
@@ -44,6 +45,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenPlanUsage,
   onOpenBalances,
 }) => {
+  const { t } = useLanguage();
+
   // Category icon mapping
   const getCategoryIcon = (category?: string) => {
     switch (category) {
@@ -77,14 +80,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              Net balance summary
+              {t('home.total_balance', undefined, 'Total Balance')}
             </span>
           </div>
           <button
             onClick={onOpenBalances}
             className="flex items-center gap-1 text-xs font-semibold text-[#6552FF] dark:text-indigo-400 hover:underline"
           >
-            All balances
+            {t('balances.title', undefined, 'All balances')}
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -95,13 +98,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/30">
             <div className="flex items-center gap-1 text-[11px] font-semibold text-[#9C5317] dark:text-amber-400 mb-1">
               <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>You owe</span>
+              <span>{t('home.you_owe', undefined, 'You owe')}</span>
             </div>
             <div className="text-2xl font-extrabold text-[#9C5317] dark:text-amber-300 tabular-nums tracking-tight">
               ${youOweTotal.toFixed(2)}
             </div>
             <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">
-              across 2 friends
+              {t('home.across_friends', undefined, 'across 2 friends')}
             </p>
           </div>
 
@@ -109,13 +112,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/30">
             <div className="flex items-center gap-1 text-[11px] font-semibold text-[#16A34A] dark:text-emerald-400 mb-1">
               <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Owed to you</span>
+              <span>{t('home.you_are_owed', undefined, 'You are owed')}</span>
             </div>
             <div className="text-2xl font-extrabold text-[#16A34A] dark:text-emerald-300 tabular-nums tracking-tight">
               ${owedToYouTotal.toFixed(2)}
             </div>
             <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">
-              from 3 friends
+              {t('home.from_friends', undefined, 'from 3 friends')}
             </p>
           </div>
         </div>
@@ -124,9 +127,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <div className="mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700/60 flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            Net: <strong className="text-neutral-900 dark:text-white tabular-nums">+${netBalance.toFixed(2)}</strong>
+            {t('home.net', undefined, 'Net')}: <strong className="text-neutral-900 dark:text-white tabular-nums">+${netBalance.toFixed(2)}</strong>
           </span>
-          <span className="text-[11px] italic">Balanzo records who owes whom</span>
+          <span className="text-[11px] italic">{t('home.balanzo_reassurance', undefined, 'Balanzo records who owes whom')}</span>
         </div>
       </div>
 
@@ -140,8 +143,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
             <Plus className="w-4 h-4 stroke-[2.5]" />
           </div>
-          <span className="text-xs font-bold tracking-tight">Add Expense</span>
-          <span className="text-[10px] text-white/80">3-step split</span>
+          <span className="text-xs font-bold tracking-tight">{t('nav.add_expense', undefined, 'Add Expense')}</span>
+          <span className="text-[10px] text-white/80">{t('home.step_split', undefined, '3-step split')}</span>
         </button>
 
         <button
@@ -152,8 +155,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
             <Zap className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <span className="text-xs font-bold tracking-tight">Settle Up</span>
-          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">Record balance</span>
+          <span className="text-xs font-bold tracking-tight">{t('btn.settle_up', undefined, 'Settle Up')}</span>
+          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{t('home.record_balance', undefined, 'Record balance')}</span>
         </button>
 
         <button
@@ -164,8 +167,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
             <Receipt className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <span className="text-xs font-bold tracking-tight">Scan Receipt</span>
-          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">Smart OCR</span>
+          <span className="text-xs font-bold tracking-tight">{t('home.scan_receipt', undefined, 'Scan Receipt')}</span>
+          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{t('home.smart_ocr', undefined, 'Smart OCR')}</span>
         </button>
       </div>
 
@@ -211,13 +214,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-            Your Active Groups
+            {t('home.active_groups', undefined, 'Active Groups')}
           </h2>
           <button
             onClick={() => onSelectGroup('all')}
             className="text-xs font-semibold text-[#6552FF] dark:text-indigo-400 hover:underline"
           >
-            See all ({groups.length})
+            {t('btn.view_all', undefined, 'See all')} ({groups.length})
           </button>
         </div>
 
@@ -265,7 +268,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       {group.name}
                     </h3>
                     <p className="text-[11px] text-white/70">
-                      ${group.totalExpenses?.toFixed(2)} total spending
+                      ${group.totalExpenses?.toFixed(2)} {t('groups.total_spent', undefined, 'total spending')}
                     </p>
                   </div>
                 </div>
@@ -276,13 +279,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <div className="flex items-center gap-2">
                   <AvatarStack members={group.members} size="xs" max={3} />
                   <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-                    {group.members.length} members
+                    {group.members.length} {t('groups.members_count', undefined, 'members')}
                   </span>
                 </div>
 
                 <div className="text-right">
                   <div className="text-[10px] text-neutral-400 font-medium">
-                    {isPositive ? 'You are owed' : 'You owe'}
+                    {isPositive ? t('home.you_are_owed', undefined, 'You are owed') : t('home.you_owe', undefined, 'You owe')}
                   </div>
                   <div
                     className={`text-sm font-extrabold tabular-nums ${
@@ -304,9 +307,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <div className="space-y-2.5">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-            Recent Expenses
+            {t('home.recent_activity', undefined, 'Recent Activity')}
           </h2>
-          <span className="text-[11px] text-neutral-400">Past 4 days</span>
+          <span className="text-[11px] text-neutral-400">{t('home.past_4_days', undefined, 'Past 4 days')}</span>
         </div>
 
         <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
@@ -326,9 +329,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       {expense.title}
                     </h4>
                     <p className="text-[11px] text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5">
-                      <span>{isPayer ? 'You paid' : 'Arif paid'}</span>
+                      <span>{isPayer ? t('expense.you_paid', undefined, 'You paid') : `${t('expense.paid_by', undefined, 'Paid by')} Arif`}</span>
                       <span>•</span>
-                      <span>{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                      <span>{new Date(expense.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                     </p>
                   </div>
                 </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserPlus, Search, Mail, Shield, Check, X, ChevronRight } from 'lucide-react';
 import { Friend } from '../../types';
 import { Avatar } from '../common/Avatar';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface FriendsScreenProps {
   friends: Friend[];
@@ -14,6 +15,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
   onAddFriendEmail,
   onSettleFriend,
 }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'blocked'>('friends');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -40,10 +42,10 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
-            Friends
+            {t('friends.title', undefined, 'Friends')}
           </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            {activeFriends.length} connected friends
+            {activeFriends.length} {t('friends.connected_friends', undefined, 'connected friends')}
           </p>
         </div>
         <button
@@ -52,7 +54,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6552FF] text-white text-xs font-bold shadow-sm shadow-[#6552FF]/20 active:scale-95 transition-all"
         >
           <UserPlus className="w-4 h-4 stroke-[2.5]" />
-          <span>Add Friend</span>
+          <span>{t('friends.add_friend', undefined, 'Add Friend')}</span>
         </button>
       </div>
 
@@ -66,7 +68,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          Friends ({activeFriends.length})
+          {t('friends.tab_friends', undefined, 'Friends')} ({activeFriends.length})
         </button>
         <button
           onClick={() => setActiveTab('requests')}
@@ -76,7 +78,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          Requests ({pendingRequests.length})
+          {t('friends.tab_requests', undefined, 'Requests')} ({pendingRequests.length})
         </button>
         <button
           onClick={() => setActiveTab('blocked')}
@@ -86,7 +88,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          Blocked
+          {t('friends.tab_blocked', undefined, 'Blocked')}
         </button>
       </div>
 
@@ -126,18 +128,18 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
                         <div className="text-xs font-extrabold text-[#16A34A] dark:text-emerald-400 tabular-nums">
                           +${friend.balanceWithYou.toFixed(2)}
                         </div>
-                        <span className="text-[10px] text-neutral-400">owes you</span>
+                        <span className="text-[10px] text-neutral-400">{t('friends.owes_you', undefined, 'owes you')}</span>
                       </>
                     ) : youOwe ? (
                       <>
                         <div className="text-xs font-extrabold text-[#9C5317] dark:text-amber-400 tabular-nums">
                           -${Math.abs(friend.balanceWithYou).toFixed(2)}
                         </div>
-                        <span className="text-[10px] text-neutral-400">you owe</span>
+                        <span className="text-[10px] text-neutral-400">{t('friends.you_owe', undefined, 'you owe')}</span>
                       </>
                     ) : (
                       <span className="text-xs font-semibold text-neutral-400">
-                        settled
+                        {t('friends.settled', undefined, 'settled')}
                       </span>
                     )}
                   </div>
@@ -177,7 +179,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
                     {friend.name}
                   </h3>
                   <p className="text-[11px] text-neutral-500">
-                    Connection invitation
+                    {t('friends.connection_invitation', undefined, 'Connection invitation')}
                   </p>
                 </div>
               </div>
@@ -201,10 +203,10 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
             <Shield className="w-5 h-5" />
           </div>
           <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-            No blocked users
+            {t('friends.no_blocked_title', undefined, 'No blocked users')}
           </h3>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 max-w-xs mx-auto">
-            When you block someone, they are removed from mutual expense visibility quietly.
+            {t('friends.no_blocked_desc', undefined, 'When you block someone, they are removed from mutual expense visibility quietly.')}
           </p>
         </div>
       )}
@@ -219,7 +221,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
                   <UserPlus className="w-4 h-4 stroke-[2.5]" />
                 </div>
                 <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                  Add Friend by Email
+                  {t('friends.modal_title', undefined, 'Add Friend by Email')}
                 </h3>
               </div>
               <button
@@ -233,7 +235,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
             <form onSubmit={handleSendInvite} className="mt-4 space-y-3">
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Friend's Email Address
+                  {t('friends.modal_email_label', undefined, "Friend's Email Address")}
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-neutral-400 absolute left-3.5 top-3.5" />
@@ -241,13 +243,13 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
                     type="email"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    placeholder="name@example.com"
+                    placeholder={t('friends.modal_email_placeholder', undefined, 'name@example.com')}
                     required
                     className="w-full pl-10 pr-3 py-3 rounded-2xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 text-xs font-medium text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6552FF]/30"
                   />
                 </div>
                 <p className="text-[11px] text-neutral-500 mt-1">
-                  We'll send an invitation to connect on Balanzo.
+                  {t('friends.modal_desc', undefined, "We'll send an invitation to connect on Balanzo.")}
                 </p>
               </div>
 
@@ -260,10 +262,10 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
                   {inviteSent ? (
                     <>
                       <Check className="w-4 h-4 stroke-[3]" />
-                      <span>Invitation Sent!</span>
+                      <span>{t('friends.modal_sent_success', undefined, 'Invitation Sent!')}</span>
                     </>
                   ) : (
-                    <span>Send Friend Request</span>
+                    <span>{t('friends.modal_send_btn', undefined, 'Send Friend Request')}</span>
                   )}
                 </button>
               </div>

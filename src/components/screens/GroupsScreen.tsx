@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Compass, Home, Sparkles, ChevronRight, Users } from 'lucide-react';
 import { Group } from '../../types';
 import { AvatarStack } from '../common/AvatarStack';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface GroupsScreenProps {
   groups: Group[];
@@ -14,6 +15,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
   onSelectGroup,
   onCreateGroup,
 }) => {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState<'all' | 'trip' | 'home'>('all');
 
   const filteredGroups = groups.filter((g) => {
@@ -27,10 +29,10 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
-            Groups
+            {t('groups.title', undefined, 'Groups')}
           </h1>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            {groups.length} active circles
+            {groups.length} {t('groups.active_circles', undefined, 'active circles')}
           </p>
         </div>
         <button
@@ -39,7 +41,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6552FF] text-white text-xs font-bold shadow-sm shadow-[#6552FF]/20 active:scale-95 transition-all"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>New Group</span>
+          <span>{t('groups.create_group', undefined, 'New Group')}</span>
         </button>
       </div>
 
@@ -53,7 +55,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          All ({groups.length})
+          {t('groups.filter_all', undefined, 'All')} ({groups.length})
         </button>
         <button
           onClick={() => setFilter('trip')}
@@ -63,7 +65,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          Trips ({groups.filter((g) => g.type === 'trip').length})
+          {t('groups.filter_trips', undefined, 'Trips')} ({groups.filter((g) => g.type === 'trip').length})
         </button>
         <button
           onClick={() => setFilter('home')}
@@ -73,7 +75,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
           }`}
         >
-          Home & Shared
+          {t('groups.filter_home', undefined, 'Home & Shared')}
         </button>
       </div>
 
@@ -124,7 +126,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                       {group.name}
                     </h3>
                     <p className="text-xs text-white/80">
-                      ${group.totalExpenses?.toFixed(2)} total expenses
+                      ${group.totalExpenses?.toFixed(2)} {t('groups.total_spent', undefined, 'total expenses')}
                     </p>
                   </div>
                 </div>
@@ -133,13 +135,13 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   <div className="flex items-center gap-2.5">
                     <AvatarStack members={group.members} size="xs" max={4} />
                     <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-                      {group.members.length} members
+                      {group.members.length} {t('groups.members_count', undefined, 'members')}
                     </span>
                   </div>
 
                   <div className="text-right">
                     <div className="text-[10px] text-neutral-400 font-medium">
-                      {isPositive ? 'You are owed' : 'You owe'}
+                      {isPositive ? t('home.you_are_owed', undefined, 'You are owed') : t('home.you_owe', undefined, 'You owe')}
                     </div>
                     <div
                       className={`text-sm font-extrabold tabular-nums ${
@@ -174,7 +176,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   <div className="flex items-center gap-2 mt-1">
                     <AvatarStack members={group.members} size="xs" max={3} />
                     <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                      ${group.totalExpenses?.toFixed(2)} total
+                      ${group.totalExpenses?.toFixed(2)} {t('groups.total_spent', undefined, 'total')}
                     </span>
                   </div>
                 </div>
@@ -183,10 +185,10 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               <div className="flex items-center gap-2">
                 <div className="text-right">
                   <span className="text-[10px] text-neutral-400 font-medium block">
-                    Status
+                    {t('activity.filter_all', undefined, 'Status')}
                   </span>
                   <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">
-                    All settled
+                    {t('settlement.settled_up', undefined, 'All settled')}
                   </span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
@@ -201,10 +203,10 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
               <Users className="w-6 h-6" />
             </div>
             <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-              No groups in this filter
+              {t('groups.no_groups', undefined, 'No groups in this filter')}
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs mx-auto">
-              Start your first group and make shared expenses effortless.
+              {t('groups.no_groups_desc', undefined, 'Start your first group and make shared expenses effortless.')}
             </p>
           </div>
         )}

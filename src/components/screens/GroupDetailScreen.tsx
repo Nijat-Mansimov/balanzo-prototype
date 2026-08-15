@@ -19,6 +19,7 @@ import {
 import { Group, Expense, Member } from '../../types';
 import { Avatar } from '../common/Avatar';
 import { AvatarStack } from '../common/AvatarStack';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface GroupDetailScreenProps {
   group: Group;
@@ -37,6 +38,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
   onSettleUp,
   initialTab = 'expenses',
 }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'expenses' | 'balances' | 'settle' | 'activity'>(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -105,12 +107,12 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                 {group.name}
               </h1>
               <p className="text-xs text-white/80 font-medium mt-0.5">
-                {group.inferredDateRange} • {group.members.length} members
+                {group.inferredDateRange} • {group.members.length} {t('groups.members_count', undefined, 'members')}
               </p>
             </div>
             <div className="text-right">
               <span className="text-[10px] text-white/70 block uppercase font-bold tracking-wider">
-                Total Expenses
+                {t('group_detail.total_expenses', undefined, 'Total Expenses')}
               </span>
               <span className="text-xl font-extrabold tabular-nums drop-shadow-md text-emerald-300">
                 ${totalSpending.toFixed(2)}
@@ -143,7 +145,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
       <div className="p-4 grid grid-cols-3 gap-2">
         <div className="p-3 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 text-center">
           <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block mb-0.5">
-            Your Balance
+            {t('group_detail.your_balance', undefined, 'Your Balance')}
           </span>
           <span className="text-sm font-extrabold text-[#16A34A] dark:text-emerald-400 tabular-nums">
             +${(group.yourBalance || 33.60).toFixed(2)}
@@ -152,7 +154,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
 
         <div className="p-3 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 text-center">
           <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block mb-0.5">
-            You Spent
+            {t('group_detail.you_spent', undefined, 'You Spent')}
           </span>
           <span className="text-sm font-extrabold text-neutral-900 dark:text-white tabular-nums">
             $176.62
@@ -161,7 +163,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
 
         <div className="p-3 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 text-center">
           <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block mb-0.5">
-            Settled
+            {t('group_detail.settled', undefined, 'Settled')}
           </span>
           <span className="text-sm font-extrabold text-neutral-500 dark:text-neutral-400 tabular-nums">
             $120.00
@@ -180,7 +182,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                 : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
             }`}
           >
-            Expenses ({groupExpenses.length})
+            {t('group_detail.tab_expenses', undefined, 'Expenses')} ({groupExpenses.length})
           </button>
           <button
             onClick={() => setActiveTab('balances')}
@@ -190,7 +192,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                 : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
             }`}
           >
-            Balances
+            {t('group_detail.tab_balances', undefined, 'Balances')}
           </button>
           <button
             onClick={() => setActiveTab('settle')}
@@ -200,7 +202,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                 : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800'
             }`}
           >
-            Settle Up
+            {t('group_detail.tab_settle', undefined, 'Settle Up')}
           </button>
         </div>
       </div>
@@ -228,9 +230,9 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                           {expense.title}
                         </h4>
                         <p className="text-[11px] text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5">
-                          <span className="font-medium">{isYou ? 'You paid' : `${payer?.name.split(' ')[0]} paid`}</span>
+                          <span className="font-medium">{isYou ? t('group_detail.you_paid', undefined, 'You paid') : `${payer?.name.split(' ')[0]} ${t('group_detail.paid_by', undefined, 'paid')}`}</span>
                           <span>•</span>
-                          <span>{new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                          <span>{new Date(expense.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                         </p>
                         {expense.note && (
                           <p className="text-[10px] text-neutral-400 italic mt-0.5 line-clamp-1">
@@ -247,11 +249,11 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                       <div className="text-[10px] text-neutral-500 dark:text-neutral-400 tabular-nums">
                         {isYou ? (
                           <span className="text-[#16A34A] dark:text-emerald-400 font-semibold">
-                            you lent ${(expense.amount - (expense.splits.find(s => s.memberId === 'user-nijat')?.amount || 0)).toFixed(2)}
+                            {t('group_detail.you_lent', undefined, 'you lent')} ${(expense.amount - (expense.splits.find(s => s.memberId === 'user-nijat')?.amount || 0)).toFixed(2)}
                           </span>
                         ) : (
                           <span className="text-[#9C5317] dark:text-amber-400 font-semibold">
-                            your share ${expense.splits.find(s => s.memberId === 'user-nijat')?.amount.toFixed(2) || '0.00'}
+                            {t('group_detail.your_share', undefined, 'your share')} ${expense.splits.find(s => s.memberId === 'user-nijat')?.amount.toFixed(2) || '0.00'}
                           </span>
                         )}
                       </div>
@@ -267,7 +269,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
           <div className="space-y-3">
             <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                Pairwise Balances in {group.name}
+                {t('group_detail.pairwise_title', undefined, 'Pairwise Balances in')} {group.name}
               </h3>
               
               <div className="space-y-2.5">
@@ -276,7 +278,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                     <Avatar name="Leyla Aliyeva" size="sm" />
                     <div>
                       <p className="text-xs font-bold text-neutral-900 dark:text-white">
-                        Leyla owes you
+                        Leyla {t('group_detail.owes_you', undefined, 'owes you')}
                       </p>
                       <p className="text-[10px] text-neutral-400">For Hotel Old City & Dinner</p>
                     </div>
@@ -289,7 +291,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                       onClick={() => onSettleUp('user-leyla')}
                       className="px-2.5 py-1 rounded-xl bg-[#6552FF]/10 hover:bg-[#6552FF]/20 text-[#6552FF] text-[11px] font-bold"
                     >
-                      Settle
+                      {t('group_detail.settle_btn', undefined, 'Settle')}
                     </button>
                   </div>
                 </div>
@@ -299,7 +301,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                     <Avatar name="Samir Hasanov" size="sm" />
                     <div>
                       <p className="text-xs font-bold text-neutral-900 dark:text-white">
-                        Samir owes you
+                        Samir {t('group_detail.owes_you', undefined, 'owes you')}
                       </p>
                       <p className="text-[10px] text-neutral-400">For Boutique Hotel share</p>
                     </div>
@@ -312,7 +314,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                       onClick={() => onSettleUp('user-samir')}
                       className="px-2.5 py-1 rounded-xl bg-[#6552FF]/10 hover:bg-[#6552FF]/20 text-[#6552FF] text-[11px] font-bold"
                     >
-                      Settle
+                      {t('group_detail.settle_btn', undefined, 'Settle')}
                     </button>
                   </div>
                 </div>
@@ -322,7 +324,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                     <Avatar name="Arif Mammadov" size="sm" />
                     <div>
                       <p className="text-xs font-bold text-neutral-900 dark:text-white">
-                        You owe Arif
+                        {t('group_detail.you_owe', undefined, 'You owe')} Arif
                       </p>
                       <p className="text-[10px] text-neutral-400">For Airport transfer</p>
                     </div>
@@ -335,7 +337,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
                       onClick={() => onSettleUp('user-arif')}
                       className="px-2.5 py-1 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-[#9C5317] dark:text-amber-300 text-[11px] font-bold"
                     >
-                      Record
+                      {t('group_detail.record_btn', undefined, 'Record')}
                     </button>
                   </div>
                 </div>
@@ -351,10 +353,10 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                Record a Settlement
+                {t('group_detail.record_settlement_title', undefined, 'Record a Settlement')}
               </h3>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs mx-auto">
-                Balanzo records who paid whom so balances stay perfectly synchronized.
+                {t('group_detail.record_settlement_desc', undefined, 'Balanzo records who paid whom so balances stay perfectly synchronized.')}
               </p>
             </div>
 
@@ -362,7 +364,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
               onClick={() => onSettleUp()}
               className="w-full py-3 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-xs font-bold shadow-md shadow-[#6552FF]/20 active:scale-95 transition-all"
             >
-              Record Group Settlement
+              {t('group_detail.record_group_settlement', undefined, 'Record Group Settlement')}
             </button>
           </div>
         )}
@@ -376,7 +378,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
           className="flex-1 py-3.5 px-4 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-xs font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>Add Expense</span>
+          <span>{t('group_detail.add_expense', undefined, 'Add Expense')}</span>
         </button>
         <button
           onClick={() => onSettleUp()}
@@ -384,7 +386,7 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
           className="py-3.5 px-4 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white text-xs font-bold shadow-lg active:scale-95 transition-all flex items-center gap-1.5"
         >
           <Zap className="w-4 h-4 text-amber-500" />
-          <span>Settle</span>
+          <span>{t('group_detail.settle_btn', undefined, 'Settle')}</span>
         </button>
       </div>
     </div>

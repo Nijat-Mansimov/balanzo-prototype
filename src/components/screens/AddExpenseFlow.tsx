@@ -21,6 +21,7 @@ import {
 import confetti from 'canvas-confetti';
 import { Group, Member, SplitMethodType, Expense } from '../../types';
 import { Avatar } from '../common/Avatar';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface AddExpenseFlowProps {
   groups: Group[];
@@ -35,6 +36,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
   onClose,
   onExpenseAdded,
 }) => {
+  const { t } = useLanguage();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedGroupId, setSelectedGroupId] = useState<string>(
@@ -126,11 +128,11 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
 
   const handleNextStep1 = () => {
     if (!title.trim()) {
-      setValidationError('Please enter an expense title');
+      setValidationError(t('expense.validation_title', undefined, 'Please enter an expense title'));
       return;
     }
     if (parsedTotal <= 0) {
-      setValidationError('Please enter a valid amount greater than $0.00');
+      setValidationError(t('expense.validation_amount', undefined, 'Please enter a valid amount greater than $0.00'));
       return;
     }
     setValidationError(null);
@@ -213,7 +215,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
         {step < 4 && (
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-bold text-neutral-900 dark:text-white">
-              Step {step} of 3
+              {step === 1 ? t('expense.step1_title', undefined, 'Expense Details') : step === 2 ? t('expense.step2_title', undefined, 'Who Paid?') : t('expense.step3_title', undefined, 'How to Split?')}
             </span>
             <div className="flex gap-1 ml-1">
               {[1, 2, 3].map((i) => (
@@ -232,7 +234,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
           onClick={onClose}
           className="text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white px-2 py-1"
         >
-          {step === 4 ? 'Done' : 'Cancel'}
+          {step === 4 ? t('btn.done', undefined, 'Done') : t('btn.cancel', undefined, 'Cancel')}
         </button>
       </div>
 
@@ -244,7 +246,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             {/* Hero Amount Input */}
             <div className="p-6 rounded-3xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 text-center">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
-                Total Amount
+                {t('expense.input_amount', undefined, 'Amount')}
               </span>
               <div className="flex items-center justify-center gap-1">
                 <span className="text-3xl font-extrabold text-neutral-400">$</span>
@@ -260,7 +262,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 />
               </div>
               <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-2">
-                Balanzo calculates precise shares automatically
+                {t('home.balanzo_reassurance', undefined, 'Balanzo calculates precise shares automatically')}
               </p>
             </div>
 
@@ -274,7 +276,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             {/* Group Selector */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-                Group
+                {t('expense.select_group', undefined, 'Group')}
               </label>
               <select
                 value={selectedGroupId}
@@ -284,7 +286,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               >
                 {groups.map((g) => (
                   <option key={g.id} value={g.id}>
-                    {g.name} ({g.members.length} members)
+                    {g.name} ({g.members.length} {t('groups.members_count', undefined, 'members')})
                   </option>
                 ))}
               </select>
@@ -293,13 +295,13 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             {/* Title & Quick Category */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-                Expense Title
+                {t('expense.input_title', undefined, 'Expense Title')}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Dinner, Taxi, Hotel"
+                placeholder={t('expense.input_title_placeholder', undefined, 'e.g. Dinner, Taxi, Hotel')}
                 id="input-expense-title"
                 className="w-full p-3.5 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm font-medium text-neutral-900 dark:text-white focus:ring-2 focus:ring-[#6552FF]/30 focus:outline-none"
               />
@@ -335,7 +337,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             {/* Paid By Selector */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-                Paid By
+                {t('expense.step2_title', undefined, 'Paid By')}
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {members.map((member) => (
@@ -365,7 +367,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
             <div className="grid grid-cols-2 gap-2.5">
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Date
+                  {t('expense.date', undefined, 'Date')}
                 </label>
                 <input
                   type="date"
@@ -376,7 +378,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               </div>
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Note (Optional)
+                  {t('expense.note', undefined, 'Note (Optional)')}
                 </label>
                 <input
                   type="text"
@@ -396,7 +398,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 id="btn-step1-next"
                 className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                <span>Continue to Split Method</span>
+                <span>{t('btn.continue', undefined, 'Continue')}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -408,10 +410,10 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
           <div className="space-y-4 animate-in fade-in duration-200">
             <div>
               <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
-                How would you like to split?
+                {t('expense.step3_title', undefined, 'How would you like to split?')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Choose the calculation method for ${parsedTotal.toFixed(2)}
+                {t('expense.step3_subtitle', undefined, 'Choose the calculation method')} for ${parsedTotal.toFixed(2)}
               </p>
             </div>
 
@@ -435,10 +437,10 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      Equal split
+                      {t('expense.split_equally', undefined, 'Equal split')}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      Split equally among {members.length} members (${(parsedTotal / members.length).toFixed(2)} each)
+                      {t('expense.split_summary', undefined, 'Split equally')} (${(parsedTotal / members.length).toFixed(2)} {t('expense.split_each', undefined, 'each')})
                     </p>
                   </div>
                 </div>
@@ -467,7 +469,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      Custom amounts
+                      {t('expense.split_exact', undefined, 'Custom amounts')}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
                       Set different exact amounts per member manually
@@ -499,7 +501,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      By percentage
+                      {t('expense.split_percentage', undefined, 'By percentage')}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
                       Split by custom percentages (total must equal 100%)
@@ -531,7 +533,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                      By shares
+                      {t('expense.split_shares', undefined, 'By shares')}
                     </h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
                       Split by proportional shares or units (e.g. 2 shares for couples)
@@ -553,7 +555,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 onClick={() => setStep(1)}
                 className="py-3.5 px-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 font-bold text-xs"
               >
-                Back
+                {t('btn.back', undefined, 'Back')}
               </button>
               <button
                 type="button"
@@ -561,7 +563,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 id="btn-step2-next"
                 className="flex-1 py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                <span>Review & Confirm</span>
+                <span>{t('btn.continue', undefined, 'Review & Confirm')}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -573,10 +575,10 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
           <div className="space-y-4 animate-in fade-in duration-200">
             <div>
               <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
-                Review Expense
+                {t('expense.split_summary', undefined, 'Review Expense')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Confirm breakdown before recording
+                {t('expense.step4_subtitle', undefined, 'Confirm breakdown before recording')}
               </p>
             </div>
 
@@ -591,12 +593,12 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                     {title}
                   </h3>
                   <p className="text-xs text-neutral-500">
-                    Paid by <strong className="text-neutral-800 dark:text-neutral-200">{payerMember.name}</strong> • {dateStr}
+                    {t('expense.paid_by', undefined, 'Paid by')} <strong className="text-neutral-800 dark:text-neutral-200">{payerMember.name}</strong> • {dateStr}
                   </p>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">
-                    Total
+                    {t('expense.total', undefined, 'Total')}
                   </span>
                   <div className="text-xl font-black text-neutral-900 dark:text-white tabular-nums">
                     ${parsedTotal.toFixed(2)}
@@ -607,7 +609,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
               {/* Each Member Pays breakdown */}
               <div className="space-y-2 pt-1">
                 <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block">
-                  Individual Shares ({splitMethod})
+                  {t('expense.split_summary', undefined, 'Individual Shares')} ({splitMethod})
                 </span>
 
                 <div className="space-y-1.5">
@@ -657,7 +659,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 onClick={() => setStep(2)}
                 className="py-3.5 px-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 font-bold text-xs"
               >
-                Back
+                {t('btn.back', undefined, 'Back')}
               </button>
               <button
                 type="button"
@@ -667,11 +669,11 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 className="flex-1 py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] disabled:opacity-50 text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
-                  <span>Recording expense...</span>
+                  <span>{t('expense.saving', undefined, 'Recording expense...')}</span>
                 ) : (
                   <>
                     <Check className="w-4 h-4 stroke-[3]" />
-                    <span>Add Expense</span>
+                    <span>{t('expense.confirm_save', undefined, 'Add Expense')}</span>
                   </>
                 )}
               </button>
@@ -688,7 +690,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
 
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                Expense Recorded
+                {t('expense.recorded_success', undefined, 'Expense Recorded')}
               </span>
               <h2 className="text-2xl font-black text-neutral-900 dark:text-white mt-1">
                 {title}
@@ -697,24 +699,24 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 ${parsedTotal.toFixed(2)}
               </p>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                Paid by {payerMember.name} • {currentGroup.name}
+                {t('expense.paid_by', undefined, 'Paid by')} {payerMember.name} • {currentGroup.name}
               </p>
             </div>
 
             <div className="p-4 rounded-3xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 max-w-xs mx-auto text-left text-xs space-y-1.5">
               <div className="flex justify-between text-neutral-500">
-                <span>Split method:</span>
-                <span className="font-semibold text-neutral-900 dark:text-white capitalize">{splitMethod} split</span>
+                <span>{t('expense.step3_title', undefined, 'Split method')}:</span>
+                <span className="font-semibold text-neutral-900 dark:text-white capitalize">{splitMethod}</span>
               </div>
               <div className="flex justify-between text-neutral-500">
-                <span>Your calculated share:</span>
+                <span>{t('group_detail.your_share', undefined, 'Your calculated share')}:</span>
                 <span className="font-semibold text-neutral-900 dark:text-white tabular-nums">
                   ${(calculatedSplits.find((s) => s.memberId === 'user-nijat')?.amount || 0).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-neutral-500">
                 <span>Status:</span>
-                <span className="font-semibold text-emerald-600">Saved to group balances</span>
+                <span className="font-semibold text-emerald-600">{t('expense.step4_subtitle', undefined, 'Saved to group balances')}</span>
               </div>
             </div>
 
@@ -725,7 +727,7 @@ export const AddExpenseFlow: React.FC<AddExpenseFlowProps> = ({
                 id="btn-success-view-group"
                 className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all"
               >
-                Back to Group
+                {t('expense.view_group_summary', undefined, 'Back to Group')}
               </button>
             </div>
           </div>

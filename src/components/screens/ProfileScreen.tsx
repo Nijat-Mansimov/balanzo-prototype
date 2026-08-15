@@ -16,12 +16,15 @@ import {
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { Avatar } from '../common/Avatar';
+import { useLanguage } from '../../i18n/LanguageContext';
+import { LanguageCode } from '../../i18n/translations';
 
 interface ProfileScreenProps {
   profile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onOpenPlanUsage: () => void;
   onOpenSettings: () => void;
+  onOpenLanguageModal?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -29,7 +32,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onUpdateProfile,
   onOpenPlanUsage,
   onOpenSettings,
+  onOpenLanguageModal,
 }) => {
+  const { t, language, setLanguage, languages, currentLanguageOption } = useLanguage();
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
@@ -47,6 +52,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     { code: 'JPY (¥)', name: 'Japanese Yen' },
     { code: 'CHF (Fr)', name: 'Swiss Franc' },
     { code: 'TRY (₺)', name: 'Turkish Lira' },
+    { code: 'RUB (₽)', name: 'Russian Ruble' },
   ];
 
   const timezones = [
@@ -54,19 +60,22 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     { code: 'America/New_York (EST)', name: 'Eastern Standard Time' },
     { code: 'Europe/London (GMT+0)', name: 'Greenwich Mean Time' },
     { code: 'Europe/Paris (CET)', name: 'Central European Time' },
+    { code: 'Europe/Berlin (CET)', name: 'Central European Time' },
+    { code: 'Europe/Madrid (CET)', name: 'Central European Time' },
+    { code: 'Europe/Istanbul (GMT+3)', name: 'Turkey Time' },
+    { code: 'Europe/Moscow (MSK)', name: 'Moscow Standard Time' },
     { code: 'Asia/Dubai (GMT+4)', name: 'Gulf Standard Time' },
     { code: 'Asia/Tokyo (JST)', name: 'Japan Standard Time' },
     { code: 'America/Los_Angeles (PST)', name: 'Pacific Standard Time' },
   ];
 
-  const locales = [
-    { code: 'en-US (English United States)', name: 'United States' },
-    { code: 'az-AZ (Azərbaycan)', name: 'Azerbaijan' },
-    { code: 'en-GB (English United Kingdom)', name: 'United Kingdom' },
-    { code: 'fr-FR (Français)', name: 'France' },
-    { code: 'de-DE (Deutsch)', name: 'Germany' },
-    { code: 'es-ES (Español)', name: 'Spain' },
-  ];
+  const locales = languages.map(lang => ({
+    code: `${lang.localeTag} (${lang.nativeName})`,
+    name: `${lang.name} • ${lang.flag}`,
+    langCode: lang.code,
+    flag: lang.flag,
+    nativeName: lang.nativeName,
+  }));
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhotoError(null);
@@ -109,7 +118,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onClick={() => setIsPhotoSheetOpen(true)}
             id="btn-edit-avatar"
             className="absolute bottom-0 right-0 p-2 rounded-full bg-[#6552FF] text-white shadow-md active:scale-95 transition-transform"
-            aria-label="Change photo"
+            aria-label={t('profile.change_photo', undefined, 'Change photo')}
           >
             <Camera className="w-3.5 h-3.5" />
           </button>
@@ -125,21 +134,21 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {/* Plan Pill */}
         <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-900/40 text-xs font-bold text-[#6552FF] dark:text-indigo-300">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Free Plan ({profile.groupsUsed}/{profile.groupsLimit} groups)</span>
+          <span>{t('profile.free_plan_badge', undefined, 'Free Plan')} ({profile.groupsUsed}/{profile.groupsLimit} {t('profile.groups_count', undefined, 'groups')})</span>
         </div>
       </div>
 
       {/* Account Info Section */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          Account Information
+          {t('profile.account_info', undefined, 'Account Information')}
         </h2>
 
         <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 space-y-3 shadow-sm">
           {/* Display Name */}
           <div className="space-y-1">
             <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-              Display Name
+              {t('profile.display_name', undefined, 'Display Name')}
             </label>
             <input
               type="text"
@@ -152,14 +161,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           {/* Read Only Email with caption */}
           <div className="space-y-1 pt-1 border-t border-neutral-100 dark:border-neutral-700/60">
             <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-              Email Address
+              {t('profile.email_address', undefined, 'Email Address')}
             </label>
             <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700/40 border border-neutral-200 dark:border-neutral-700 flex items-center justify-between text-xs font-semibold text-neutral-700 dark:text-neutral-300">
               <span>{profile.email}</span>
               <span className="text-[10px] font-medium text-neutral-400">Read-only</span>
             </div>
             <p className="text-[10px] text-neutral-400 italic">
-              Contact support to change your email
+              {t('profile.contact_support', undefined, 'Contact support to change your email')}
             </p>
           </div>
         </div>
@@ -168,7 +177,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Preferences Section (Searchable Pickers) */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          Regional Preferences
+          {t('profile.regional_preferences', undefined, 'Regional Preferences')}
         </h2>
 
         <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
@@ -183,7 +192,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                  Primary Currency
+                  {t('profile.primary_currency', undefined, 'Primary Currency')}
                 </span>
                 <span className="text-[11px] text-neutral-500">
                   {profile.currency}
@@ -204,7 +213,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                  Timezone
+                  {t('profile.timezone', undefined, 'Timezone')}
                 </span>
                 <span className="text-[11px] text-neutral-500">
                   {profile.timezone}
@@ -214,25 +223,42 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <ChevronRight className="w-4 h-4 text-neutral-400" />
           </button>
 
-          {/* Locale */}
+          {/* Locale / Language */}
           <button
-            onClick={() => setActivePicker('locale')}
-            className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
+            onClick={() => {
+              if (onOpenLanguageModal) {
+                onOpenLanguageModal();
+              } else {
+                setActivePicker('locale');
+              }
+            }}
+            id="btn-profile-language"
+            className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center">
-                <Globe className="w-4 h-4 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-base">
+                {currentLanguageOption.flag}
               </div>
               <div>
-                <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                  Language & Locale
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                    {t('profile.language_locale', undefined, 'Language & Region')}
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#6552FF]/10 text-[#6552FF] dark:text-indigo-300 font-bold">
+                    {currentLanguageOption.nativeName}
+                  </span>
+                </div>
                 <span className="text-[11px] text-neutral-500">
-                  {profile.locale}
+                  {currentLanguageOption.name} • {currentLanguageOption.localeTag}
                 </span>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] text-[#6552FF] font-semibold hidden sm:inline">
+                {t('profile.change_language', undefined, 'Change')}
+              </span>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </div>
           </button>
         </div>
       </div>
@@ -240,7 +266,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Plan & Settings Navigation */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          Management
+          {t('profile.management', undefined, 'Management')}
         </h2>
 
         <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/70 overflow-hidden shadow-sm">
@@ -254,10 +280,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                  Plan & Usage
+                  {t('profile.plan_usage', undefined, 'Plan & Group Limits')}
                 </span>
                 <span className="text-[11px] text-neutral-500">
-                  3 of 3 groups used • Free
+                  {profile.groupsUsed} of {profile.groupsLimit} {t('profile.groups_count', undefined, 'groups')} • {t('profile.free_plan_badge', undefined, 'Free Plan')}
                 </span>
               </div>
             </div>
@@ -274,10 +300,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                  Settings & Security
+                  {t('profile.settings_security', undefined, 'Settings & Security')}
                 </span>
                 <span className="text-[11px] text-neutral-500">
-                  Password, Privacy & Terms
+                  {t('profile.settings_desc', undefined, 'Password, Privacy & Terms')}
                 </span>
               </div>
             </div>
@@ -292,7 +318,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <div className="w-full bg-white dark:bg-neutral-800 rounded-t-3xl p-5 shadow-2xl border-t border-neutral-200 dark:border-neutral-700 max-h-[85%] overflow-y-auto animate-in slide-in-from-bottom-5">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
               <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                Profile Photo
+                {t('profile.change_photo', undefined, 'Profile Photo')}
               </h3>
               <button
                 onClick={() => setIsPhotoSheetOpen(false)}
@@ -312,7 +338,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="mt-4 space-y-2">
               <label className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-700/40 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors text-xs font-bold text-neutral-900 dark:text-white">
                 <Camera className="w-4 h-4 text-[#6552FF]" />
-                <span>Take Photo</span>
+                <span>{t('profile.take_photo', undefined, 'Take Photo')}</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -324,7 +350,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
               <label className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-700/40 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors text-xs font-bold text-neutral-900 dark:text-white">
                 <Upload className="w-4 h-4 text-[#6552FF]" />
-                <span>Choose from Library</span>
+                <span>{t('profile.choose_library', undefined, 'Choose from Library')}</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -339,7 +365,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/20 hover:bg-red-100 text-xs font-bold text-red-600 dark:text-red-400 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
-                  <span>Remove Photo</span>
+                  <span>{t('profile.remove_photo', undefined, 'Remove Current Photo')}</span>
                 </button>
               )}
             </div>
@@ -357,7 +383,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <div className="w-full max-h-[85%] bg-white dark:bg-neutral-800 rounded-t-3xl p-5 shadow-2xl border-t border-neutral-200 dark:border-neutral-700 flex flex-col animate-in slide-in-from-bottom-5 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
               <h3 className="text-sm font-bold text-neutral-900 dark:text-white capitalize">
-                Select {activePicker}
+                {activePicker === 'locale' 
+                  ? t('profile.select_language', undefined, 'Select Language') 
+                  : `Select ${activePicker}`}
               </h3>
               <button
                 onClick={() => {
@@ -375,7 +403,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={`Search ${activePicker}...`}
+                placeholder={`${t('btn.search', undefined, 'Search')} ${activePicker}...`}
                 className="w-full p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 text-xs font-medium text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6552FF]/30"
               />
             </div>
@@ -391,26 +419,54 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                   item.code.toLowerCase().includes(searchQuery.toLowerCase())
                 )
-                .map((item) => (
-                  <button
-                    key={item.code}
-                    onClick={() => {
-                      onUpdateProfile({ [activePicker!]: item.code });
-                      setActivePicker(null);
-                      setSearchQuery('');
-                    }}
-                    className="w-full p-2.5 rounded-xl flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700 text-left transition-colors"
-                  >
-                    <div>
-                      <span className="text-xs font-bold text-neutral-900 dark:text-white block">
-                        {item.code}
-                      </span>
-                      <span className="text-[11px] text-neutral-500">
-                        {item.name}
-                      </span>
-                    </div>
-                  </button>
-                ))}
+                .map((item) => {
+                  const isCurrent = activePicker === 'locale' 
+                    ? (item as any).langCode === language 
+                    : profile[activePicker!] === item.code;
+
+                  return (
+                    <button
+                      key={item.code}
+                      onClick={() => {
+                        if (activePicker === 'locale') {
+                          const langCode = (item as any).langCode as LanguageCode;
+                          if (langCode) {
+                            setLanguage(langCode);
+                          }
+                          onUpdateProfile({ locale: item.code });
+                        } else {
+                          onUpdateProfile({ [activePicker!]: item.code });
+                        }
+                        setActivePicker(null);
+                        setSearchQuery('');
+                      }}
+                      className={`w-full p-3 rounded-2xl flex items-center justify-between border transition-all text-left ${
+                        isCurrent
+                          ? 'border-[#6552FF] bg-[#6552FF]/5 dark:bg-[#6552FF]/15'
+                          : 'border-neutral-100 dark:border-neutral-700/50 hover:bg-neutral-50 dark:hover:bg-neutral-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {activePicker === 'locale' && (
+                          <span className="text-xl">{(item as any).flag}</span>
+                        )}
+                        <div>
+                          <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                            {(item as any).nativeName || item.code}
+                          </span>
+                          <span className="text-[11px] text-neutral-500">
+                            {item.name}
+                          </span>
+                        </div>
+                      </div>
+                      {isCurrent && (
+                        <div className="w-5 h-5 rounded-full bg-[#6552FF] text-white flex items-center justify-center">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </div>
         </div>

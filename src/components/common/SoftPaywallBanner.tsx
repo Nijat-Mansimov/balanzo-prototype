@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, X, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface SoftPaywallBannerProps {
   onSeePlans: () => void;
@@ -9,12 +10,15 @@ interface SoftPaywallBannerProps {
 
 export const SoftPaywallBanner: React.FC<SoftPaywallBannerProps> = ({
   onSeePlans,
-  message = "You're using all 3 groups on the Free plan. Premium removes the limit.",
+  message,
   className = '',
 }) => {
+  const { t } = useLanguage();
   const [isDismissed, setIsDismissed] = useState(false);
 
   if (isDismissed) return null;
+
+  const displayMessage = message || t('plan.reached_limit', undefined, "You're using all 3 groups on the Free plan. Premium removes the limit.");
 
   return (
     <div
@@ -25,13 +29,13 @@ export const SoftPaywallBanner: React.FC<SoftPaywallBannerProps> = ({
       </div>
       <div className="flex-1 pr-6">
         <p className="text-xs font-semibold text-neutral-900 dark:text-white leading-snug">
-          {message}
+          {displayMessage}
         </p>
         <button
           onClick={onSeePlans}
           className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-[#6552FF] dark:text-indigo-400 hover:underline"
         >
-          See plans & usage
+          {t('plan.see_plans', undefined, 'See plans & usage')}
           <ChevronRight className="w-3 h-3" />
         </button>
       </div>

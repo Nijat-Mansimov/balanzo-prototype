@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { Member, SettlementRecord } from '../../types';
 import { Avatar } from '../common/Avatar';
 import { MOCK_MEMBERS } from '../../data/mockData';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface SettlementScreenProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
   initialToUserId = 'user-arif',
   initialAmount = 24.30,
 }) => {
+  const { t } = useLanguage();
   const [fromUserId, setFromUserId] = useState(initialFromUserId);
   const [toUserId, setToUserId] = useState(initialToUserId);
   const [amountStr, setAmountStr] = useState(initialAmount.toString());
@@ -82,13 +84,13 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h2 className="text-sm font-bold text-neutral-900 dark:text-white">
-          Record Settlement
+          {t('settle.title', undefined, 'Record Settlement')}
         </h2>
         <button
           onClick={onClose}
           className="text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white px-2 py-1"
         >
-          {isDone ? 'Done' : 'Cancel'}
+          {isDone ? t('btn.done', undefined, 'Done') : t('btn.cancel', undefined, 'Cancel')}
         </button>
       </div>
 
@@ -98,7 +100,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
             {/* Hero Amount */}
             <div className="p-6 rounded-3xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 text-center">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
-                Settlement Amount
+                {t('settle.amount_label', undefined, 'Settlement Amount')}
               </span>
               <div className="flex items-center justify-center gap-1">
                 <span className="text-3xl font-extrabold text-neutral-400">$</span>
@@ -117,7 +119,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
             <div className="p-4 rounded-3xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 space-y-3">
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Who Paid? (Payer)
+                  {t('settle.who_paid', undefined, 'Who Paid? (Payer)')}
                 </label>
                 <select
                   value={fromUserId}
@@ -140,7 +142,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
 
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Who Received? (Recipient)
+                  {t('settle.who_received', undefined, 'Who Received? (Recipient)')}
                 </label>
                 <select
                   value={toUserId}
@@ -160,7 +162,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
             <div className="grid grid-cols-2 gap-2.5">
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Payment Method Note
+                  {t('settle.note', undefined, 'Payment Method Note')}
                 </label>
                 <input
                   type="text"
@@ -173,7 +175,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
 
               <div>
                 <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Date
+                  {t('settle.date', undefined, 'Date')}
                 </label>
                 <input
                   type="date"
@@ -189,10 +191,10 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
               <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-emerald-900 dark:text-emerald-300">
-                  Balanzo records who owes whom.
+                  {t('settings.never_moves_money', undefined, 'Balanzo records who owes whom.')}
                 </p>
                 <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">
-                  Recording a settlement updates group balances without moving funds through our system.
+                  {t('settings.never_moves_money_desc', undefined, 'Recording a settlement updates group balances without moving funds through our system.')}
                 </p>
               </div>
             </div>
@@ -206,7 +208,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
                 className="w-full py-3.5 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
-                <span>Record Settlement</span>
+                <span>{t('settle.confirm', undefined, 'Record Settlement')}</span>
               </button>
             </div>
           </div>
@@ -219,7 +221,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
 
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                Settlement Recorded
+                {t('settle.success_title', undefined, 'Settlement Recorded')}
               </span>
               <h2 className="text-2xl font-black text-neutral-900 dark:text-white mt-1">
                 ${parseFloat(amountStr || '0').toFixed(2)}
@@ -230,16 +232,16 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
             </div>
 
             <div className="p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 max-w-xs mx-auto text-xs text-left space-y-1">
-              <p className="text-neutral-500">Method: <strong className="text-neutral-900 dark:text-white">{note}</strong></p>
-              <p className="text-neutral-500">Date: <strong className="text-neutral-900 dark:text-white">{dateStr}</strong></p>
-              <p className="text-emerald-600 font-semibold mt-1">Balances synchronized 🎉</p>
+              <p className="text-neutral-500">{t('settle.method', undefined, 'Method')}: <strong className="text-neutral-900 dark:text-white">{note}</strong></p>
+              <p className="text-neutral-500">{t('settle.date', undefined, 'Date')}: <strong className="text-neutral-900 dark:text-white">{dateStr}</strong></p>
+              <p className="text-emerald-600 font-semibold mt-1">{t('settle.success_desc', undefined, 'Balances synchronized')} 🎉</p>
             </div>
 
             <button
               onClick={onClose}
               className="w-full max-w-xs mx-auto py-3.5 rounded-2xl bg-[#6552FF] text-white text-sm font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all"
             >
-              Done
+              {t('btn.done', undefined, 'Done')}
             </button>
           </div>
         )}

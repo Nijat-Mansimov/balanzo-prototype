@@ -10,9 +10,11 @@ import {
   Battery, 
   ChevronDown,
   Sparkles,
-  Info
+  Info,
+  Globe
 } from 'lucide-react';
 import { ScreenView, ActiveTab } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface MobileFrameProps {
   children: React.ReactNode;
@@ -23,6 +25,7 @@ interface MobileFrameProps {
   onToggleDarkMode: () => void;
   isGalleryMode: boolean;
   onToggleGalleryMode: () => void;
+  onOpenLanguageModal?: () => void;
 }
 
 export const MobileFrame: React.FC<MobileFrameProps> = ({
@@ -34,8 +37,10 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({
   onToggleDarkMode,
   isGalleryMode,
   onToggleGalleryMode,
+  onOpenLanguageModal,
 }) => {
   const [time, setTime] = useState('9:41');
+  const { language, setLanguage, languages, currentLanguageOption } = useLanguage();
 
   useEffect(() => {
     const updateTime = () => {
@@ -123,6 +128,24 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({
               <option value="settings">11 • Settings & Security</option>
             </select>
           )}
+
+          {/* Language Selector Dropdown */}
+          <div className="relative flex items-center">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as any)}
+              className="pl-2 pr-6 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs font-bold text-neutral-800 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-[#6552FF]/30 cursor-pointer appearance-none"
+              title="Change application language"
+              aria-label="Change language"
+            >
+              {languages.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.flag} {l.nativeName}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-neutral-400 absolute right-2 pointer-events-none" />
+          </div>
 
           {/* Dark / Light Toggle */}
           <button

@@ -22,6 +22,7 @@ import { Header } from './components/common/Header';
 import { BottomNavBar } from './components/common/BottomNavBar';
 import { WorkspaceSwitcherModal } from './components/common/WorkspaceSwitcherModal';
 import { CreateGroupModal } from './components/common/CreateGroupModal';
+import { LanguageSwitcherModal } from './components/common/LanguageSwitcherModal';
 import { HomeScreen } from './components/screens/HomeScreen';
 import { GroupsScreen } from './components/screens/GroupsScreen';
 import { GroupDetailScreen } from './components/screens/GroupDetailScreen';
@@ -35,8 +36,11 @@ import { PlanUsageScreen } from './components/screens/PlanUsageScreen';
 import { SettingsScreen } from './components/screens/SettingsScreen';
 import { DesignGalleryView } from './components/DesignGalleryView';
 import { MobileFrame } from './components/MobileFrame';
+import { useLanguage } from './i18n/LanguageContext';
 
 export default function App() {
+  const { t } = useLanguage();
+
   // State
   const [workspace, setWorkspace] = useState<WorkspaceType>('personal');
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
@@ -53,6 +57,7 @@ export default function App() {
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
   const [preselectedGroupId, setPreselectedGroupId] = useState<string | undefined>(undefined);
 
   // Settlement flow params
@@ -181,6 +186,7 @@ export default function App() {
         onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         isGalleryMode={isGalleryMode}
         onToggleGalleryMode={() => setIsGalleryMode(!isGalleryMode)}
+        onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
       >
         {isGalleryMode ? (
           <DesignGalleryView
@@ -200,13 +206,14 @@ export default function App() {
                   workspace={workspace}
                   onOpenWorkspaceSwitcher={() => setIsWorkspaceModalOpen(true)}
                   onOpenNotifications={() => setScreenView({ type: 'notifications' })}
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
                   unreadCount={unreadNotifCount}
                   showBack={screenView.type === 'notifications' || screenView.type === 'balances'}
                   title={
                     screenView.type === 'notifications'
-                      ? 'Notifications'
+                      ? t('notifications.title', undefined, 'Notifications')
                       : screenView.type === 'balances'
-                      ? 'Balances'
+                      ? t('balances.title', undefined, 'Balances')
                       : undefined
                   }
                   onBack={() => setScreenView({ type: 'home' })}
@@ -306,6 +313,7 @@ export default function App() {
                   onUpdateProfile={(updated) => setProfile((p) => ({ ...p, ...updated }))}
                   onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
                   onOpenSettings={() => setScreenView({ type: 'settings' })}
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
                 />
               )}
 
@@ -317,7 +325,10 @@ export default function App() {
               )}
 
               {screenView.type === 'settings' && (
-                <SettingsScreen onBack={() => setScreenView({ type: 'profile' })} />
+                <SettingsScreen 
+                  onBack={() => setScreenView({ type: 'profile' })} 
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+                />
               )}
             </div>
 
@@ -372,6 +383,12 @@ export default function App() {
               isOpen={isCreateGroupModalOpen}
               onClose={() => setIsCreateGroupModalOpen(false)}
               onGroupCreated={handleGroupCreated}
+            />
+
+            {/* Global Language Switcher Modal */}
+            <LanguageSwitcherModal
+              isOpen={isLanguageModalOpen}
+              onClose={() => setIsLanguageModalOpen(false)}
             />
           </div>
         )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Home, Users, Plus, UserCheck, User, Compass } from 'lucide-react';
 import { ActiveTab, WorkspaceType } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface BottomNavBarProps {
   activeTab: ActiveTab;
@@ -16,6 +17,8 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   onOpenAddExpense,
   workspace,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <div className="sticky bottom-0 left-0 right-0 z-30 pointer-events-auto px-4 pb-4 pt-1 bg-gradient-to-t from-neutral-100 via-neutral-100/95 to-transparent dark:from-neutral-900 dark:via-neutral-900/95">
       <nav
@@ -34,7 +37,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           aria-label="Home tab"
         >
           <Home className={`w-5 h-5 transition-transform ${activeTab === 'home' ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'}`} />
-          <span className="text-[10px] mt-1 tracking-tight">Home</span>
+          <span className="text-[10px] mt-1 tracking-tight">{t('nav.home', undefined, 'Home')}</span>
         </button>
 
         {/* Tab 2: Groups */}
@@ -49,7 +52,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           aria-label="Groups tab"
         >
           <Users className={`w-5 h-5 transition-transform ${activeTab === 'groups' ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'}`} />
-          <span className="text-[10px] mt-1 tracking-tight">Groups</span>
+          <span className="text-[10px] mt-1 tracking-tight">{t('nav.groups', undefined, 'Groups')}</span>
         </button>
 
         {/* Center: Add Expense Action */}
@@ -59,6 +62,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
             id="nav-btn-add-expense"
             className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white shadow-md shadow-[#6552FF]/40 active:scale-90 transition-all focus:outline-none focus:ring-2 focus:ring-[#6552FF]/50"
             aria-label="Add new expense"
+            title={t('nav.add_expense', undefined, 'Add Expense')}
           >
             <Plus className="w-6 h-6 stroke-[2.5]" />
           </button>
@@ -76,7 +80,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           aria-label="Friends tab"
         >
           <UserCheck className={`w-5 h-5 transition-transform ${activeTab === 'friends' ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'}`} />
-          <span className="text-[10px] mt-1 tracking-tight">Friends</span>
+          <span className="text-[10px] mt-1 tracking-tight">{t('nav.friends', undefined, 'Friends')}</span>
         </button>
 
         {/* Tab 5: Profile */}
@@ -91,7 +95,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           aria-label="Profile tab"
         >
           <User className={`w-5 h-5 transition-transform ${activeTab === 'profile' ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'}`} />
-          <span className="text-[10px] mt-1 tracking-tight">Profile</span>
+          <span className="text-[10px] mt-1 tracking-tight">{t('nav.profile', undefined, 'Profile')}</span>
         </button>
       </nav>
     </div>
