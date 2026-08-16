@@ -9,7 +9,9 @@ import {
   ActiveTab, 
   ScreenView,
   SettlementRecord,
-  PaymentMethod
+  PaymentMethod,
+  Member,
+  OnboardingData
 } from './types';
 import { 
   INITIAL_GROUPS, 
@@ -23,6 +25,7 @@ import { Header } from './components/common/Header';
 import { BottomNavBar } from './components/common/BottomNavBar';
 import { WorkspaceSwitcherModal } from './components/common/WorkspaceSwitcherModal';
 import { CreateGroupModal } from './components/common/CreateGroupModal';
+import { GroupMembersModal } from './components/common/GroupMembersModal';
 import { LanguageSwitcherModal } from './components/common/LanguageSwitcherModal';
 import { AddFundsModal } from './components/common/AddFundsModal';
 import { AddPaymentMethodModal } from './components/common/AddPaymentMethodModal';
@@ -38,6 +41,8 @@ import { NotificationsScreen } from './components/screens/NotificationsScreen';
 import { ProfileScreen } from './components/screens/ProfileScreen';
 import { PlanUsageScreen } from './components/screens/PlanUsageScreen';
 import { SettingsScreen } from './components/screens/SettingsScreen';
+import { AuthFlow } from './components/auth/AuthFlow';
+import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
 import { DesignGalleryView } from './components/DesignGalleryView';
 import { MobileFrame } from './components/MobileFrame';
 import { useLanguage } from './i18n/LanguageContext';
@@ -45,17 +50,65 @@ import { useLanguage } from './i18n/LanguageContext';
 export default function App() {
   const { t } = useLanguage();
 
+  // Authentication & First-time Onboarding detection
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('balanzo_is_authenticated') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('balanzo_has_seen_onboarding') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Screen router:
+  // 1. If user is authenticated, take them directly to the main app ('home')
+  // 2. If user is NOT authenticated:
+  //    - If first-time user (has not seen onboarding), show 'onboarding'
+  //    - If returning/previously registered user who logged out, show 'auth' (login)
+  const [screenView, setScreenView] = useState<ScreenView>(() => {
+    try {
+      const isAuth = localStorage.getItem('balanzo_is_authenticated') === 'true';
+      if (isAuth) {
+        return { type: 'home' };
+      }
+      const hasSeen = localStorage.getItem('balanzo_has_seen_onboarding') === 'true';
+      if (hasSeen) {
+        return { type: 'auth', authView: 'login', initialView: 'login' };
+      }
+      // Brand new user opening app for the first time
+      return { type: 'onboarding' };
+    } catch (e) {
+      return { type: 'onboarding' };
+    }
+  });
+
+  const [pendingOnboardingData, setPendingOnboardingData] = useState<OnboardingData | null>(null);
+
   // State
   const [workspace, setWorkspace] = useState<WorkspaceType>('personal');
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
-  const [screenView, setScreenView] = useState<ScreenView>({ type: 'home' });
 
   // Data state
   const [groups, setGroups] = useState<Group[]>(INITIAL_GROUPS);
   const [expenses, setExpenses] = useState<Expense[]>(INITIAL_EXPENSES);
   const [friends, setFriends] = useState<Friend[]>(INITIAL_FRIENDS);
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
-  const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
+  const [profile, setProfile] = useState<UserProfile>(() => {
+    try {
+      const savedProfile = localStorage.getItem('balanzo_user_profile');
+      if (savedProfile) {
+        return JSON.parse(savedProfile);
+      }
+    } catch (e) {}
+    return INITIAL_PROFILE;
+  });
   const [walletBalance, setWalletBalance] = useState<number>(425.50);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
@@ -79,6 +132,7 @@ export default function App() {
   // Modals
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [isGroupMembersModalOpen, setIsGroupMembersModalOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
@@ -166,6 +220,199 @@ export default function App() {
     setNotifications((prev) => [newNotif, ...prev]);
   };
 
+  const handleOnboardingChooseAuth = (view: 'register' | 'login', data: OnboardingData) => {
+    setHasSeenOnboarding(true);
+    try {
+      localStorage.setItem('balanzo_has_seen_onboarding', 'true');
+    } catch (e) {}
+
+    setPendingOnboardingData(data);
+    setProfile((prev) => ({
+      ...prev,
+      name: data.name || prev.name,
+      currency: data.currency || prev.currency,
+      avatarUrl: data.avatarUrl || prev.avatarUrl,
+      initials: data.initials || prev.initials,
+      defaultSplitMethod: data.defaultSplitMethod || prev.defaultSplitMethod,
+    }));
+
+    setScreenView({ type: 'auth', authView: view, initialView: view });
+  };
+
+  const handleOnboardingSkip = (view: 'register' | 'login' = 'register') => {
+    setHasSeenOnboarding(true);
+    try {
+      localStorage.setItem('balanzo_has_seen_onboarding', 'true');
+    } catch (e) {}
+    setScreenView({ type: 'auth', authView: view, initialView: view });
+  };
+
+  const handleOnboardingComplete = (onboardingData: OnboardingData) => {
+    setHasSeenOnboarding(true);
+    try {
+      localStorage.setItem('balanzo_has_seen_onboarding', 'true');
+    } catch (e) {}
+
+    setProfile((prev) => {
+      const updated = {
+        ...prev,
+        name: onboardingData.name || prev.name,
+        currency: onboardingData.currency || prev.currency,
+        avatarUrl: onboardingData.avatarUrl || prev.avatarUrl,
+        initials: onboardingData.initials || prev.initials,
+        defaultSplitMethod: onboardingData.defaultSplitMethod || prev.defaultSplitMethod,
+      };
+      try {
+        localStorage.setItem('balanzo_user_profile', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    if (onboardingData.initialGroup) {
+      const newGroupMembers = [
+        {
+          id: profile.id || 'user-nijat',
+          name: onboardingData.name || profile.name,
+          avatarUrl: onboardingData.avatarUrl || profile.avatarUrl,
+          initials: onboardingData.initials || profile.initials,
+          role: 'admin' as const,
+          email: profile.email,
+        },
+        ...onboardingData.initialGroup.invitedFriendIds.map((fId) => {
+          const f = friends.find((fr) => fr.id === fId);
+          return {
+            id: f?.id || fId,
+            name: f?.name || 'Friend',
+            avatarUrl: f?.avatarUrl,
+            initials: f?.initials || 'FR',
+            role: 'member' as const,
+            email: f?.email || `${fId}@example.com`,
+          };
+        }),
+      ];
+
+      const starterGroup: Group = {
+        id: `group-${Date.now()}`,
+        name: onboardingData.initialGroup.name,
+        type: onboardingData.initialGroup.type,
+        currency: onboardingData.currency || profile.currency || 'USD ($)',
+        members: newGroupMembers,
+        totalExpenses: 0,
+        yourBalance: 0,
+        createdAt: new Date().toISOString(),
+        inferredDateRange: 'Active Now',
+        coverGradient: 'from-violet-600 via-indigo-600 to-purple-800',
+      };
+      setGroups((prev) => [starterGroup, ...prev]);
+    }
+
+    // If already authenticated (e.g. tour replay), return to home; otherwise direct to auth
+    if (isAuthenticated) {
+      setScreenView({ type: 'home' });
+      setActiveTab('home');
+    } else {
+      setScreenView({ type: 'auth', authView: 'register', initialView: 'register' });
+    }
+  };
+
+  const handleLoginSuccess = (loggedInUser: Partial<UserProfile>) => {
+    setIsAuthenticated(true);
+    setHasSeenOnboarding(true);
+    try {
+      localStorage.setItem('balanzo_is_authenticated', 'true');
+      localStorage.setItem('balanzo_has_seen_onboarding', 'true');
+    } catch (e) {}
+
+    setProfile((prev) => {
+      const updated = { ...prev, ...loggedInUser };
+      try {
+        localStorage.setItem('balanzo_user_profile', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    setScreenView({ type: 'home' });
+    setActiveTab('home');
+  };
+
+  const handleRegisterSuccess = (newUser: Partial<UserProfile>) => {
+    setIsAuthenticated(true);
+    setHasSeenOnboarding(true);
+    try {
+      localStorage.setItem('balanzo_is_authenticated', 'true');
+      localStorage.setItem('balanzo_has_seen_onboarding', 'true');
+    } catch (e) {}
+
+    if (pendingOnboardingData?.initialGroup) {
+      const newGroupMembers = [
+        {
+          id: newUser.id || 'user-new',
+          name: newUser.name || profile.name,
+          avatarUrl: newUser.avatarUrl || profile.avatarUrl,
+          initials: newUser.initials || profile.initials,
+          role: 'admin' as const,
+          email: newUser.email || profile.email,
+        },
+        ...pendingOnboardingData.initialGroup.invitedFriendIds.map((fId) => {
+          const f = friends.find((fr) => fr.id === fId);
+          return {
+            id: f?.id || fId,
+            name: f?.name || 'Friend',
+            avatarUrl: f?.avatarUrl,
+            initials: f?.initials || 'FR',
+            role: 'member' as const,
+            email: f?.email || `${fId}@example.com`,
+          };
+        }),
+      ];
+
+      const starterGroup: Group = {
+        id: `group-${Date.now()}`,
+        name: pendingOnboardingData.initialGroup.name,
+        type: pendingOnboardingData.initialGroup.type,
+        currency: newUser.currency || pendingOnboardingData.currency || 'USD ($)',
+        members: newGroupMembers,
+        totalExpenses: 0,
+        yourBalance: 0,
+        createdAt: new Date().toISOString(),
+        inferredDateRange: 'Active Now',
+        coverGradient: 'from-violet-600 via-indigo-600 to-purple-800',
+      };
+      setGroups((prev) => [starterGroup, ...prev]);
+    }
+
+    setProfile((prev) => {
+      const updated = { ...prev, ...newUser };
+      try {
+        localStorage.setItem('balanzo_user_profile', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    setScreenView({ type: 'home' });
+    setActiveTab('home');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    try {
+      localStorage.setItem('balanzo_is_authenticated', 'false');
+    } catch (e) {}
+    setScreenView({ type: 'auth', authView: 'login', initialView: 'login' });
+  };
+
+  const handleResetDemoFirstTime = () => {
+    setIsAuthenticated(false);
+    setHasSeenOnboarding(false);
+    setPendingOnboardingData(null);
+    try {
+      localStorage.removeItem('balanzo_is_authenticated');
+      localStorage.removeItem('balanzo_has_seen_onboarding');
+      localStorage.removeItem('balanzo_user_profile');
+    } catch (e) {}
+    setScreenView({ type: 'onboarding' });
+  };
+
   const handleAddFriendEmail = (email: string) => {
     const newFriend: Friend = {
       id: `user-${Date.now()}`,
@@ -184,6 +431,33 @@ export default function App() {
       ...prev,
       groupsUsed: prev.groupsUsed + 1,
     }));
+  };
+
+  const handleAddMemberToGroup = (groupId: string, newMember: Member) => {
+    setGroups((prev) =>
+      prev.map((g) => {
+        if (g.id === groupId) {
+          if (g.members.some((m) => m.id === newMember.id)) return g;
+          return {
+            ...g,
+            members: [...g.members, newMember],
+          };
+        }
+        return g;
+      })
+    );
+
+    const newNotif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      title: 'Member Added',
+      body: `${newMember.name} joined ${groups.find((g) => g.id === groupId)?.name || 'group'}.`,
+      timestamp: 'Just now',
+      isRead: false,
+      type: 'expense_added',
+      workspaceContext: workspace,
+      groupId,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
   };
 
   const handleAddFunds = (amount: number) => {
@@ -240,6 +514,7 @@ export default function App() {
         hasActiveModal={
           isWorkspaceModalOpen ||
           isCreateGroupModalOpen ||
+          isGroupMembersModalOpen ||
           isAddExpenseOpen ||
           isLanguageModalOpen ||
           isAddFundsModalOpen ||
@@ -248,6 +523,17 @@ export default function App() {
         }
         modals={
           <>
+            {/* Group Members Modal */}
+            {isGroupMembersModalOpen && (
+              <GroupMembersModal
+                isOpen={isGroupMembersModalOpen}
+                onClose={() => setIsGroupMembersModalOpen(false)}
+                group={selectedGroup}
+                friends={friends}
+                onAddMemberToGroup={handleAddMemberToGroup}
+              />
+            )}
+
             {/* 3-Step Add Expense Wizard Flow */}
             {isAddExpenseOpen && (
               <AddExpenseFlow
@@ -330,7 +616,9 @@ export default function App() {
             {screenView.type !== 'group-detail' &&
               screenView.type !== 'plan-usage' &&
               screenView.type !== 'settings' &&
-              screenView.type !== 'add-expense' && (
+              screenView.type !== 'add-expense' &&
+              screenView.type !== 'auth' &&
+              screenView.type !== 'onboarding' && (
                 <Header
                   workspace={workspace}
                   onOpenWorkspaceSwitcher={() => setIsWorkspaceModalOpen(true)}
@@ -363,6 +651,36 @@ export default function App() {
 
             {/* SCREEN CONTENT ROUTER */}
             <div className="flex-1">
+              {screenView.type === 'auth' && (
+                <AuthFlow
+                  initialView={screenView.authView || screenView.initialView || 'login'}
+                  initialData={
+                    pendingOnboardingData
+                      ? {
+                          name: pendingOnboardingData.name,
+                          currency: pendingOnboardingData.currency,
+                          avatarUrl: pendingOnboardingData.avatarUrl,
+                          initials: pendingOnboardingData.initials,
+                        }
+                      : undefined
+                  }
+                  onLogin={handleLoginSuccess}
+                  onRegister={handleRegisterSuccess}
+                  onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+                />
+              )}
+
+              {screenView.type === 'onboarding' && (
+                <OnboardingFlow
+                  initialProfile={profile}
+                  friends={friends}
+                  isReplayMode={isAuthenticated}
+                  onChooseAuth={handleOnboardingChooseAuth}
+                  onComplete={handleOnboardingComplete}
+                  onSkip={handleOnboardingSkip}
+                />
+              )}
+
               {screenView.type === 'home' && (
                 <HomeScreen
                   groups={groups}
@@ -398,6 +716,7 @@ export default function App() {
                   expenses={expenses}
                   onBack={() => setScreenView({ type: 'groups' })}
                   onAddExpense={() => handleOpenAddExpense(selectedGroup.id)}
+                  onOpenMembers={() => setIsGroupMembersModalOpen(true)}
                   onSettleUp={(memberId) =>
                     setSettlementParams({
                       fromUserId: 'user-nijat',
@@ -483,13 +802,24 @@ export default function App() {
                 <ProfileScreen
                   profile={profile}
                   walletBalance={walletBalance}
-                  onUpdateProfile={(updated) => setProfile((p) => ({ ...p, ...updated }))}
+                  onUpdateProfile={(updated) => {
+                    setProfile((p) => {
+                      const updatedProfile = { ...p, ...updated };
+                      try {
+                        localStorage.setItem('balanzo_user_profile', JSON.stringify(updatedProfile));
+                      } catch (e) {}
+                      return updatedProfile;
+                    });
+                  }}
                   onOpenPlanUsage={() => setScreenView({ type: 'plan-usage' })}
                   onOpenSettings={() => setScreenView({ type: 'settings' })}
                   onOpenAnalytics={() => setScreenView({ type: 'analytics' })}
                   onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
                   onOpenAddFunds={() => setIsAddFundsModalOpen(true)}
                   onOpenAddPaymentMethod={() => setIsAddPaymentMethodModalOpen(true)}
+                  onLogout={handleLogout}
+                  onReplayOnboarding={() => setScreenView({ type: 'onboarding' })}
+                  onOpenAuth={(view) => setScreenView({ type: 'auth', authView: view, initialView: view })}
                 />
               )}
 
@@ -504,6 +834,9 @@ export default function App() {
                 <SettingsScreen 
                   onBack={() => setScreenView({ type: 'profile' })} 
                   onOpenLanguageModal={() => setIsLanguageModalOpen(true)}
+                  onLogout={handleLogout}
+                  onResetFirstTime={handleResetDemoFirstTime}
+                  onReplayOnboarding={() => setScreenView({ type: 'onboarding' })}
                 />
               )}
             </div>

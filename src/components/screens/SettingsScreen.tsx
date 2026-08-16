@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { ArrowLeft, KeyRound, Shield, LogOut, Check, ChevronRight, X, ExternalLink, Globe } from 'lucide-react';
+import { ArrowLeft, KeyRound, Shield, LogOut, Check, ChevronRight, X, ExternalLink, Globe, Sparkles, UserCheck, RotateCcw } from 'lucide-react';
 import { CURRENT_USER } from '../../data/mockData';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface SettingsScreenProps {
   onBack: () => void;
   onOpenLanguageModal?: () => void;
+  onLogout?: () => void;
+  onReplayOnboarding?: () => void;
+  onResetFirstTime?: () => void;
 }
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ 
   onBack,
   onOpenLanguageModal,
+  onLogout,
+  onReplayOnboarding,
+  onResetFirstTime,
 }) => {
   const { t, currentLanguageOption } = useLanguage();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -140,6 +146,37 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </div>
 
+      {/* Onboarding & Guide */}
+      {onReplayOnboarding && (
+        <div className="space-y-2">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+            Tour & Help
+          </h2>
+          <div className="rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
+            <button
+              onClick={onReplayOnboarding}
+              id="btn-settings-replay-onboarding"
+              className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                    Replay Onboarding Tour
+                  </span>
+                  <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
+                    Walk through app features, profile setup & circles
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Session Actions */}
       <div className="space-y-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
@@ -148,8 +185,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
         <div className="divide-y divide-neutral-100 dark:divide-neutral-700/60 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 overflow-hidden shadow-xs">
           <button
-            onClick={() => {}}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
+            onClick={onLogout}
+            id="btn-settings-logout"
+            className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left cursor-pointer"
           >
             <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
               {t('settings.log_out', undefined, 'Log out')}
@@ -157,9 +195,28 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <LogOut className="w-4 h-4 text-neutral-400" />
           </button>
 
+          {onResetFirstTime && (
+            <button
+              onClick={onResetFirstTime}
+              id="btn-settings-reset-first-time"
+              className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left cursor-pointer text-amber-600 dark:text-amber-400"
+            >
+              <div>
+                <span className="text-xs font-bold block">
+                  Reset to First-Time User State
+                </span>
+                <span className="text-[10px] text-neutral-500 dark:text-neutral-400">
+                  Clears local session & replays initial onboarding flow
+                </span>
+              </div>
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
+
           <button
-            onClick={() => {}}
-            className="w-full p-4 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left text-red-600 dark:text-red-400"
+            onClick={onLogout}
+            id="btn-settings-logout-all"
+            className="w-full p-4 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left text-red-600 dark:text-red-400 cursor-pointer"
           >
             <span className="text-xs font-bold">
               {t('settings.log_out_all', undefined, 'Log out of all devices')}

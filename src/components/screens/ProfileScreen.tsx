@@ -33,6 +33,9 @@ interface ProfileScreenProps {
   onOpenLanguageModal?: () => void;
   onOpenAddPaymentMethod?: () => void;
   onOpenAddFunds?: () => void;
+  onLogout?: () => void;
+  onReplayOnboarding?: () => void;
+  onOpenAuth?: () => void;
   walletBalance?: number;
 }
 
@@ -45,6 +48,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenLanguageModal,
   onOpenAddPaymentMethod,
   onOpenAddFunds,
+  onLogout,
+  onReplayOnboarding,
+  onOpenAuth,
   walletBalance = 425.50,
 }) => {
   const { t, language, setLanguage, languages, currentLanguageOption } = useLanguage();
@@ -419,6 +425,52 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
             <ChevronRight className="w-4 h-4 text-neutral-400" />
           </button>
+
+          {onReplayOnboarding && (
+            <button
+              onClick={onReplayOnboarding}
+              id="btn-profile-replay-onboarding"
+              className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-neutral-900 dark:text-white block">
+                    {t('profile.onboarding_tour', undefined, 'Onboarding & App Tour')}
+                  </span>
+                  <span className="text-[11px] text-neutral-500">
+                    Feature overview, preferences & circles
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </button>
+          )}
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              id="btn-profile-logout"
+              className="w-full p-3.5 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-red-600 dark:text-red-400 block">
+                    {t('settings.log_out', undefined, 'Log out / Switch account')}
+                  </span>
+                  <span className="text-[11px] text-neutral-400">
+                    Switch to another user or sign in
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          )}
         </div>
       </div>
 

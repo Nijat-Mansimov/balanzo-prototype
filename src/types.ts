@@ -134,6 +134,23 @@ export interface UserProfile {
   groupsUsed: number;
   groupsLimit: number;
   walletBalance: number;
+  defaultSplitMethod?: SplitMethodType;
+}
+
+export type AuthScreenType = 'login' | 'register' | 'forgot-password' | 'otp-verify' | 'reset-password';
+
+export interface OnboardingData {
+  name: string;
+  currency: string;
+  avatarUrl?: string;
+  initials: string;
+  defaultSplitMethod: SplitMethodType;
+  initialGroup?: {
+    name: string;
+    type: 'trip' | 'home' | 'couple' | 'other';
+    invitedFriendIds: string[];
+  };
+  enableNotifications?: boolean;
 }
 
 export type ActiveTab = 'home' | 'groups' | 'friends' | 'profile';
@@ -151,4 +168,6 @@ export type ScreenView =
   | { type: 'profile' }
   | { type: 'settings' }
   | { type: 'plan-usage' }
-  | { type: 'create-group' };
+  | { type: 'create-group' }
+  | { type: 'onboarding' }
+  | { type: 'auth'; authView?: AuthScreenType; initialView?: AuthScreenType };

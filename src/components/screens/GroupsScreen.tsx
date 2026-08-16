@@ -29,7 +29,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
 
   return (
     <div className="space-y-4 px-4 pb-20 pt-1 animate-in fade-in duration-300">
-      {/* Header title & Instagram-style Transparent + Action */}
+      {/* Header title & Modern Minimal Create Group Action */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-black text-neutral-900 dark:text-white tracking-tight">
@@ -39,14 +39,16 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
             {groups.length} {t('groups.active_circles', undefined, 'active circles')}
           </p>
         </div>
+
         <button
           onClick={onCreateGroup}
           id="btn-create-group"
-          className="w-10 h-10 -mr-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-white flex items-center justify-center active:scale-90 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-xs font-extrabold hover:bg-neutral-800 dark:hover:bg-neutral-100 shadow-xs active:scale-95 transition-all cursor-pointer"
           aria-label={t('groups.create_group', undefined, 'Create New Group')}
           title={t('groups.create_group', undefined, 'Create New Group')}
         >
-          <Plus className="w-6 h-6 stroke-[2.2]" />
+          <Plus className="w-3.5 h-3.5 stroke-[3]" />
+          <span>{t('groups.create_group', undefined, 'New Group')}</span>
         </button>
       </div>
 
@@ -223,16 +225,26 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
         })}
 
         {filteredGroups.length === 0 && (
-          <div className="text-center py-12 px-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-            <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 flex items-center justify-center mx-auto mb-3">
+          <div className="text-center py-12 px-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 flex items-center justify-center mx-auto">
               <Users className="w-6 h-6 stroke-[2]" />
             </div>
-            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-              {t('groups.no_groups', undefined, 'No groups in this filter')}
-            </h3>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs mx-auto">
-              {t('groups.no_groups_desc', undefined, 'Start your first group and make shared expenses effortless.')}
-            </p>
+            <div>
+              <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                {t('groups.no_groups', undefined, 'No groups found')}
+              </h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-xs mx-auto">
+                {t('groups.no_groups_desc', undefined, 'Start your first group and make shared expenses effortless.')}
+              </p>
+            </div>
+            <button
+              onClick={onCreateGroup}
+              id="btn-create-first-group"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-xs font-extrabold shadow-sm active:scale-95 transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>{t('groups.create_group', undefined, 'Create Group')}</span>
+            </button>
           </div>
         )}
       </div>

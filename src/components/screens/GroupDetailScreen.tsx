@@ -394,23 +394,24 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
         )}
       </div>
 
-      {/* 6. FLOATING DUAL ACTION BAR */}
-      <div className="sticky bottom-4 mx-4 z-20 flex gap-2">
+      {/* 6. FLOATING DUAL ACTION BAR (Modern Minimal Redesign) */}
+      <div className="sticky bottom-4 mx-4 z-20 flex items-center gap-2">
         <button
           onClick={onAddExpense}
           id="btn-group-add-expense"
-          className="flex-1 py-3 px-4 rounded-2xl bg-[#6552FF] hover:bg-[#513EE8] text-white text-xs font-bold shadow-lg shadow-[#6552FF]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-3.5 px-4 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-xs font-extrabold shadow-md shadow-neutral-900/10 dark:shadow-black/30 hover:bg-neutral-800 dark:hover:bg-neutral-100 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>{t('group_detail.add_expense', undefined, 'Expense')}</span>
+          <Plus className="w-4 h-4 stroke-[3]" />
+          <span>{t('group_detail.add_expense', undefined, 'Add Expense')}</span>
         </button>
+
         <button
           onClick={() => onSettleUp()}
           id="btn-group-settle-up"
-          className="py-3 px-4 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white text-xs font-bold shadow-lg active:scale-95 transition-all flex items-center gap-1.5"
+          className="py-3.5 px-4 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-700 text-neutral-900 dark:text-white text-xs font-extrabold shadow-xs hover:bg-neutral-50 dark:hover:bg-neutral-700/60 active:scale-98 transition-all flex items-center gap-1.5 cursor-pointer"
         >
-          <Zap className="w-4 h-4 text-amber-500" />
-          <span>{t('group_detail.settle_btn', undefined, 'Settle')}</span>
+          <Zap className="w-4 h-4 text-[#6552FF] dark:text-indigo-400 stroke-[2.5]" />
+          <span>{t('group_detail.settle_btn', undefined, 'Settle Up')}</span>
         </button>
       </div>
     </div>
