@@ -166,7 +166,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <div className="p-4 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
                 <Wallet className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
@@ -182,7 +182,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 onClick={onOpenAddFunds}
                 id="btn-profile-add-funds"
-                className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-900 dark:text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>Add Funds</span>
@@ -192,7 +192,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
           <div className="pt-2 border-t border-neutral-100 dark:border-neutral-700/80 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-300 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
                 <CreditCard className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
@@ -267,8 +267,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-[#6552FF] flex items-center justify-center">
-                <DollarSign className="w-4 h-4 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                <DollarSign className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
@@ -288,8 +288,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center">
-                <Clock className="w-4 h-4 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                <Clock className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
@@ -316,7 +316,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center text-base">
                 {currentLanguageOption.flag}
               </div>
               <div>
@@ -357,15 +357,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-400 flex items-center justify-center">
-                <BarChart3 className="w-4 h-4 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-neutral-900 dark:text-white block">
                     Expense Analytics
                   </span>
-                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold">
                     Monthly Breakdown
                   </span>
                 </div>
@@ -391,8 +391,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
@@ -412,7 +412,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 flex items-center justify-center">
-                <Settings className="w-4 h-4 stroke-[2.5]" />
+                <Settings className="w-4 h-4 stroke-[2]" />
               </div>
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-white block">
@@ -433,8 +433,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               className="w-full p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 stroke-[2]" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-neutral-900 dark:text-white block">

@@ -139,7 +139,7 @@ export const GroupsScreen: React.FC<GroupsScreenProps> = ({
                   {/* Destination & Inferred date range pill */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                     <span className="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-[11px] font-semibold text-white border border-white/10 flex items-center gap-1.5">
-                      <Compass className="w-3.5 h-3.5 text-[#FF8A3D] stroke-[2]" />
+                      <Compass className="w-3.5 h-3.5 text-neutral-200 stroke-[2]" />
                       {group.inferredDestination}
                     </span>
                     <span className="text-[11px] text-white/90 font-medium px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm">

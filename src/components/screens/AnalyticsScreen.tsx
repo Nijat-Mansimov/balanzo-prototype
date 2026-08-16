@@ -350,15 +350,13 @@ export const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({
                 className="p-3.5 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 flex items-center justify-between shadow-xs hover:border-neutral-300 dark:hover:border-neutral-600 transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <div 
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
-                  >
-                    <IconComponent className="w-5 h-5 stroke-[2.2]" />
+                  <div className="w-10 h-10 rounded-2xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 flex items-center justify-center shrink-0">
+                    <IconComponent className="w-5 h-5 stroke-[2]" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-neutral-900 dark:text-white">
-                      {cat.name}
+                    <h3 className="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
+                      <span>{cat.name}</span>
+                      <span className="w-2 h-2 rounded-full inline-block shrink-0" style={{ backgroundColor: cat.color }} />
                     </h3>
                     <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
                       {cat.count} expenses • {cat.pct} of monthly total

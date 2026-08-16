@@ -63,7 +63,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center text-base">
                 {currentLanguageOption.flag}
               </div>
               <div>
@@ -71,7 +71,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   <span className="text-xs font-bold text-neutral-900 dark:text-white block">
                     {t('settings.current_language', undefined, 'Current Language')}
                   </span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#6552FF]/10 dark:bg-indigo-950 text-[#6552FF] dark:text-indigo-300 font-bold">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold">
                     {currentLanguageOption.nativeName}
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               className="w-full p-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors text-left group cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>

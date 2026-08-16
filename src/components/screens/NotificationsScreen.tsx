@@ -21,13 +21,13 @@ export const NotificationsScreen: React.FC<NotificationsScreenProps> = ({
   const getIcon = (type: string) => {
     switch (type) {
       case 'expense_added':
-        return <Receipt className="w-4 h-4 text-[#6552FF] dark:text-indigo-400 stroke-[2]" />;
+        return <Receipt className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'settlement_recorded':
-        return <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[2]" />;
+        return <Zap className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'friend_request':
-        return <UserPlus className="w-4 h-4 text-amber-500 dark:text-amber-400 stroke-[2]" />;
+        return <UserPlus className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       default:
-        return <Bell className="w-4 h-4 text-neutral-500 dark:text-neutral-400 stroke-[2]" />;
+        return <Bell className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
     }
   };
 

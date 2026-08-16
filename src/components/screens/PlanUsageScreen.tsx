@@ -131,7 +131,7 @@ export const PlanUsageScreen: React.FC<PlanUsageScreenProps> = ({
         {/* Trip Pass Card */}
         <div className="p-5 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <Zap className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />
             <h4 className="text-sm font-black text-neutral-900 dark:text-white">
               {t('plan.trip_pass_title', undefined, 'Trip Pass')}
             </h4>

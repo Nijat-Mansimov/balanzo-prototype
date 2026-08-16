@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, 
   ArrowUpRight, 
   ArrowDownLeft, 
   Zap, 
@@ -65,23 +64,13 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
     <div className="space-y-4 px-4 pb-24 pt-1 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={onBack}
-            className="p-2 -ml-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-xl font-black text-neutral-900 dark:text-white tracking-tight">
-              {t('balances.title', undefined, 'User Balances')}
-            </h1>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-              {t('balances.subtitle', undefined, 'Dedicated breakdown of all your active balances')}
-            </p>
-          </div>
+        <div>
+          <h1 className="text-xl font-black text-neutral-900 dark:text-white tracking-tight">
+            {t('balances.title', undefined, 'User Balances')}
+          </h1>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+            {t('balances.subtitle', undefined, 'Dedicated breakdown of all your active balances')}
+          </p>
         </div>
       </div>
 
@@ -146,7 +135,7 @@ export const BalancesScreen: React.FC<BalancesScreenProps> = ({
       <div className="relative overflow-hidden rounded-3xl bg-neutral-900 dark:bg-neutral-800 text-white p-4.5 border border-neutral-800 dark:border-neutral-700 shadow-xs">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-white/10 dark:bg-neutral-700 flex items-center justify-center text-emerald-400">
+            <div className="w-8 h-8 rounded-xl bg-white/10 dark:bg-neutral-700 flex items-center justify-center text-white/90">
               <Wallet className="w-4 h-4 stroke-[2]" />
             </div>
             <div>

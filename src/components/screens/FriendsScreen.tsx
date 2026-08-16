@@ -266,7 +266,7 @@ export const FriendsScreen: React.FC<FriendsScreenProps> = ({
           >
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#6552FF]/10 text-[#6552FF] dark:text-indigo-300 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 flex items-center justify-center">
                   <UserPlus className="w-4 h-4 stroke-[2]" />
                 </div>
                 <h3 className="text-sm font-bold text-neutral-900 dark:text-white">

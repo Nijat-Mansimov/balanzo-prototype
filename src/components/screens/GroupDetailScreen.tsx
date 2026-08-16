@@ -51,17 +51,17 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
   const getCategoryIcon = (category?: string) => {
     switch (category) {
       case 'food':
-        return <Utensils className="w-4 h-4 text-orange-500" />;
+        return <Utensils className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'transport':
-        return <Car className="w-4 h-4 text-blue-500" />;
+        return <Car className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'hotel':
-        return <Building className="w-4 h-4 text-indigo-500" />;
+        return <Building className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'entertainment':
-        return <Ticket className="w-4 h-4 text-purple-500" />;
+        return <Ticket className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'groceries':
-        return <ShoppingBag className="w-4 h-4 text-emerald-500" />;
+        return <ShoppingBag className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       default:
-        return <Receipt className="w-4 h-4 text-neutral-500" />;
+        return <Receipt className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
     }
   };
 
@@ -101,13 +101,13 @@ export const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
               className="px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md text-xs font-bold text-white hover:bg-black/70 border border-white/20 flex items-center gap-1.5 active:scale-95 transition-all shadow-sm"
               title="View Group Members"
             >
-              <Users className="w-3.5 h-3.5 text-indigo-300 stroke-[2]" />
+              <Users className="w-3.5 h-3.5 text-neutral-200 stroke-[2]" />
               <span>{group.members.length} Members</span>
             </button>
 
             {group.inferredDestination && (
               <span className="px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md text-xs font-semibold text-white/90 border border-white/10 flex items-center gap-1.5">
-                <Compass className="w-3.5 h-3.5 text-[#FF8A3D]" />
+                <Compass className="w-3.5 h-3.5 text-neutral-200 stroke-[2]" />
                 {group.inferredDestination}
               </span>
             )}

@@ -1,10 +1,7 @@
 import React from 'react';
 import { 
   Plus, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
   ChevronRight, 
-  Compass,
   UtensilsCrossed,
   CarFront,
   Building2,
@@ -13,15 +10,14 @@ import {
   ReceiptText,
   ArrowLeftRight,
   ScanLine,
-  WalletCards,
   Wallet,
   TrendingUp,
-  Scale,
-  Sparkles
+  Sparkles,
+  AlertCircle,
+  Clock
 } from 'lucide-react';
 import { Group, Expense, WorkspaceType } from '../../types';
 import { AvatarStack } from '../common/AvatarStack';
-import { SoftPaywallBanner } from '../common/SoftPaywallBanner';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface HomeScreenProps {
@@ -56,21 +52,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const { t } = useLanguage();
 
-  // Distinctive category icon mapping
+  // Standardized category icon mapping (clean, cohesive neutral styling)
   const getCategoryIcon = (category?: string) => {
     switch (category) {
       case 'food':
-        return <UtensilsCrossed className="w-4 h-4 text-orange-500 stroke-[2]" />;
+        return <UtensilsCrossed className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'transport':
-        return <CarFront className="w-4 h-4 text-blue-500 stroke-[2]" />;
+        return <CarFront className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'hotel':
-        return <Building2 className="w-4 h-4 text-indigo-500 stroke-[2]" />;
+        return <Building2 className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'entertainment':
-        return <Ticket className="w-4 h-4 text-purple-500 stroke-[2]" />;
+        return <Ticket className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       case 'groceries':
-        return <ShoppingBag className="w-4 h-4 text-emerald-500 stroke-[2]" />;
+        return <ShoppingBag className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
       default:
-        return <ReceiptText className="w-4 h-4 text-neutral-500 stroke-[2]" />;
+        return <ReceiptText className="w-4 h-4 text-neutral-700 dark:text-neutral-200 stroke-[2]" />;
     }
   };
 
@@ -82,259 +78,274 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="space-y-4 px-4 pb-24 pt-1 animate-in fade-in duration-300">
-      {/* 1. WELCOME & DEDICATED BALANCES TRIGGER BANNER */}
-      <div className="p-4.5 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-700/80 shadow-xs flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-bold text-sm shadow-xs">
-            <WalletCards className="w-5 h-5 stroke-[2]" />
-          </div>
+      {/* 1. UNIFIED FINANCIAL HERO HUB (Clean, uncluttered, all-in-one card) */}
+      <div className="p-4.5 rounded-3xl bg-white dark:bg-neutral-800/95 border border-neutral-200/80 dark:border-neutral-700/80 shadow-xs space-y-3.5">
+        {/* Top: Net Balance Header & Full Balances View Link */}
+        <div className="flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-1.5">
-              <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                User Balances
-              </h2>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300">
-                Active
-              </span>
-            </div>
-            <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-base font-extrabold text-neutral-900 dark:text-white tabular-nums">
+            <span className="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider block">
+              {workspace === 'personal' ? 'Personal Net Balance' : 'Business Balance'}
+            </span>
+            <div className="mt-1">
+              <span className="text-3xl font-black text-neutral-900 dark:text-white tracking-tight tabular-nums">
                 {isNetPositive ? '+' : '-'}${Math.abs(netBalance).toFixed(2)}
               </span>
-              <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
-                net balance
+            </div>
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <span className={`w-1.5 h-1.5 rounded-full ${isNetPositive ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              <span className={`text-xs font-semibold ${
+                isNetPositive 
+                  ? 'text-emerald-600 dark:text-emerald-400' 
+                  : 'text-amber-600 dark:text-amber-400'
+              }`}>
+                {isNetPositive ? 'You are owed overall' : 'You owe overall'}
               </span>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={onOpenBalances}
+            id="btn-home-view-balances-pill"
+            className="flex items-center gap-1 text-xs font-bold text-neutral-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white bg-neutral-100 dark:bg-neutral-700/80 hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2.5 py-1.5 rounded-xl cursor-pointer transition-colors shrink-0"
+          >
+            <span>Breakdown</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={onOpenBalances}
-          id="btn-home-open-dedicated-balances"
-          className="flex items-center gap-1 px-3 py-2 rounded-2xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-xs font-bold text-neutral-900 dark:text-white active:scale-95 transition-all shadow-xs"
-        >
-          <span>View Balances</span>
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {/* 2. REDESIGNED MODERN QUICK ACTIONS BAR */}
-      <div className="grid grid-cols-4 gap-2">
-        {/* Action 1: Add Expense (Primary Redesigned CTA) */}
-        <button
-          type="button"
-          onClick={onOpenAddExpense}
-          id="quick-action-add-expense"
-          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 active:scale-95 transition-all text-center group shadow-sm shadow-neutral-900/10 dark:shadow-white/5"
-          aria-label={t('nav.add_expense', undefined, 'Add Expense')}
-        >
-          <div className="w-7 h-7 rounded-full bg-white/20 dark:bg-neutral-900/20 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-            <Plus className="w-4 h-4 stroke-[3]" />
-          </div>
-          <span className="text-[11px] font-bold tracking-tight">Add Expense</span>
-        </button>
-
-        {/* Action 2: Analytics Screen */}
-        <button
-          type="button"
-          onClick={onOpenAnalytics || onOpenBalances}
-          id="quick-action-analytics"
-          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-900 dark:text-white active:scale-95 transition-all text-center group shadow-xs"
-          aria-label="Expense Analytics"
-        >
-          <div className="w-7 h-7 rounded-full bg-[#6552FF]/10 text-[#6552FF] dark:text-indigo-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-            <TrendingUp className="w-4 h-4 stroke-[2.4]" />
-          </div>
-          <span className="text-[11px] font-bold tracking-tight">Analytics</span>
-        </button>
-
-        {/* Action 3: Settle Up */}
-        <button
-          type="button"
-          onClick={onOpenSettleUp}
-          id="quick-action-settle-up"
-          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-900 dark:text-white active:scale-95 transition-all text-center group shadow-xs"
-          aria-label={t('btn.settle_up', undefined, 'Settle Up')}
-        >
-          <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-            <ArrowLeftRight className="w-4 h-4 stroke-[2.2]" />
-          </div>
-          <span className="text-[11px] font-bold tracking-tight">Settle Up</span>
-        </button>
-
-        {/* Action 4: Balances & Wallet */}
-        <button
-          type="button"
-          onClick={onOpenBalances}
-          id="quick-action-balances-panel"
-          className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-900 dark:text-white active:scale-95 transition-all text-center group shadow-xs"
-          aria-label="User Balances"
-        >
-          <div className="w-7 h-7 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-            <Wallet className="w-4 h-4 stroke-[2.2]" />
-          </div>
-          <span className="text-[11px] font-bold tracking-tight">Balances</span>
-        </button>
-      </div>
-
-      {/* 3. SOFT PAYWALL / USAGE BANNER */}
-      <SoftPaywallBanner onSeePlans={onOpenPlanUsage} />
-
-      {/* 5. ATTENTION ITEMS */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-            Needs Attention
-          </h2>
-          <span className="text-[11px] font-semibold text-neutral-400">1 item</span>
-        </div>
-
-        <div
-          onClick={onOpenSettleUp}
-          className="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all cursor-pointer group shadow-xs"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-              <ArrowLeftRight className="w-4 h-4 stroke-[2.2]" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-neutral-900 dark:text-white">
-                Arif requested settlement
-              </p>
-              <p className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
-                Airport transfer • $11.25 pending
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-amber-600 dark:text-amber-400 tabular-nums">
-              $11.25
+        {/* Middle: Integrated Two-Metric Strip */}
+        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-100 dark:border-neutral-800">
+          <div className="px-2">
+            <span className="text-[10px] font-medium text-neutral-400 dark:text-neutral-500 block">Owed to you</span>
+            <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
+              +${owedToYouTotal.toFixed(2)}
             </span>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
+          <div className="px-2 border-l border-neutral-200/60 dark:border-neutral-700/60">
+            <span className="text-[10px] font-medium text-neutral-400 dark:text-neutral-500 block">You owe</span>
+            <span className="text-sm font-extrabold text-amber-600 dark:text-amber-400 tabular-nums">
+              -${youOweTotal.toFixed(2)}
+            </span>
+          </div>
+        </div>
+
+        {/* Primary Action Row: Add Expense & Settle Up */}
+        <div className="grid grid-cols-2 gap-2 pt-0.5">
+          <button
+            type="button"
+            onClick={onOpenAddExpense}
+            id="btn-hero-add-expense"
+            className="py-3 px-3 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 text-xs font-extrabold flex items-center justify-center gap-2 hover:bg-neutral-800 dark:hover:bg-neutral-100 active:scale-98 transition-all shadow-xs cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span>Add Expense</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenSettleUp}
+            id="btn-hero-settle-up"
+            className="py-3 px-3 rounded-2xl bg-white dark:bg-neutral-700/80 border border-neutral-200 dark:border-neutral-600 text-neutral-900 dark:text-white text-xs font-extrabold flex items-center justify-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 active:scale-98 transition-all shadow-xs cursor-pointer"
+          >
+            <ArrowLeftRight className="w-3.5 h-3.5 stroke-[2.2] text-[#6552FF] dark:text-indigo-400" />
+            <span>Settle Up</span>
+          </button>
+        </div>
+
+        {/* Minimal Secondary Tools Ribbon (Analytics, Balances, Scan, Plan) */}
+        <div className="flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-700/60 text-neutral-600 dark:text-neutral-300 text-[11px] font-semibold overflow-x-auto no-scrollbar gap-1">
+          <button
+            type="button"
+            onClick={onOpenAnalytics || onOpenBalances}
+            id="btn-hero-tool-analytics"
+            className="flex items-center gap-1.5 py-1 px-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400 stroke-[2]" />
+            <span>Analytics</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenScanReceipt}
+            id="btn-hero-tool-scan"
+            className="flex items-center gap-1.5 py-1 px-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <ScanLine className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400 stroke-[2]" />
+            <span className="whitespace-nowrap">Scan Receipt</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenBalances}
+            id="btn-hero-tool-balances"
+            className="flex items-center gap-1.5 py-1 px-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Wallet className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400 stroke-[2]" />
+            <span>Balances</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenPlanUsage}
+            id="btn-hero-tool-plan"
+            className="flex items-center gap-1.5 py-1 px-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700/50 text-neutral-600 dark:text-neutral-300 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400 stroke-[2]" />
+            <span>Plan</span>
+          </button>
         </div>
       </div>
 
-      {/* 6. ACTIVE GROUPS (FLAGSHIP TRIP CARDS) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
+      {/* 2. NEEDS ATTENTION INLINE NOTIFICATION (Only shows when pending action exists) */}
+      <div
+        onClick={onOpenSettleUp}
+        id="card-needs-attention"
+        className="flex items-center justify-between p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 hover:bg-amber-50 dark:hover:bg-amber-950/50 transition-all cursor-pointer group shadow-2xs"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-4 h-4 stroke-[2.2]" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-neutral-900 dark:text-white leading-tight">
+              Arif requested settlement
+            </p>
+            <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
+              Airport transfer • $11.25 pending
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-black text-amber-600 dark:text-amber-400 tabular-nums">
+            $11.25
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+        </div>
+      </div>
+
+      {/* 3. ACTIVE GROUPS SECTION (Cleaner, refined visual cards) */}
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between pt-1">
           <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             {t('home.active_groups', undefined, 'Active Groups')}
           </h2>
           <button
             onClick={() => onSelectGroup('all')}
-            className="text-xs font-bold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white"
+            id="btn-home-see-all-groups"
+            className="text-xs font-bold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white cursor-pointer"
           >
             {t('btn.view_all', undefined, 'See all')} ({groups.length})
           </button>
         </div>
 
-        {groups.slice(0, 2).map((group) => {
-          const isPositive = (group.yourBalance || 0) >= 0;
-          return (
-            <div
-              key={group.id}
-              onClick={() => onSelectGroup(group.id)}
-              className="relative overflow-hidden rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all cursor-pointer group shadow-xs"
-            >
-              {/* Cover Image / Gradient Header */}
-              <div className="relative h-28 w-full overflow-hidden bg-neutral-900">
-                {group.coverImage ? (
-                  <img
-                    src={group.coverImage}
-                    alt={group.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full opacity-90"
-                    style={{ background: group.coverGradient || '#6552FF' }}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                
-                {/* Destination & Date badges */}
-                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-[11px] font-semibold text-white/90 border border-white/10 flex items-center gap-1">
-                    <Compass className="w-3 h-3 text-[#FF8A3D] stroke-[2]" />
-                    {group.inferredDestination || 'Trip'}
-                  </span>
-                  <span className="text-[11px] text-white/80 font-medium px-2 py-0.5 rounded-md bg-black/30 backdrop-blur-sm">
-                    {group.inferredDateRange}
-                  </span>
-                </div>
+        <div className="space-y-2.5">
+          {groups.slice(0, 2).map((group) => {
+            const isPositive = (group.yourBalance || 0) >= 0;
+            return (
+              <div
+                key={group.id}
+                onClick={() => onSelectGroup(group.id)}
+                className="overflow-hidden rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all cursor-pointer group shadow-2xs"
+              >
+                {/* Header Strip with Cover Preview */}
+                <div className="relative h-20 w-full overflow-hidden bg-neutral-900">
+                  {group.coverImage ? (
+                    <img
+                      src={group.coverImage}
+                      alt={group.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full opacity-90"
+                      style={{ background: group.coverGradient || '#6552FF' }}
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  
+                  {/* Destination Tag */}
+                  <div className="absolute top-2.5 left-3 right-3 flex items-center justify-between">
+                    <span className="px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[10px] font-semibold text-white/90 border border-white/10">
+                      {group.inferredDestination || 'Circle'}
+                    </span>
+                    <span className="text-[10px] text-white/80 font-medium px-1.5 py-0.5 rounded bg-black/30 backdrop-blur-sm">
+                      {group.inferredDateRange || 'Active'}
+                    </span>
+                  </div>
 
-                {/* Group Title in banner */}
-                <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-                  <div>
-                    <h3 className="text-base font-bold text-white tracking-tight leading-tight">
+                  {/* Group Title in banner */}
+                  <div className="absolute bottom-2.5 left-3 right-3 flex items-end justify-between">
+                    <h3 className="text-sm font-bold text-white tracking-tight leading-tight drop-shadow-xs">
                       {group.name}
                     </h3>
-                    <p className="text-[11px] text-white/70">
-                      ${(group.totalExpenses || 0).toFixed(2)} {t('groups.total_spent', undefined, 'total spending')}
-                    </p>
+                    <span className="text-[10px] text-white/80 font-medium">
+                      ${(group.totalExpenses || 0).toFixed(2)} total
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card Footer with Members and Balance */}
+                <div className="p-3 flex items-center justify-between bg-white dark:bg-neutral-800">
+                  <div className="flex items-center gap-2">
+                    <AvatarStack members={group.members} size="xs" max={3} />
+                    <span className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium">
+                      {group.members.length} members
+                    </span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-[10px] text-neutral-400 font-medium mr-1.5">
+                      {isPositive ? 'You are owed' : 'You owe'}
+                    </span>
+                    <span
+                      className={`text-xs font-black tabular-nums ${
+                        isPositive
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-amber-600 dark:text-amber-400'
+                      }`}
+                    >
+                      {isPositive ? '+' : ''}${Math.abs(group.yourBalance || 0).toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
-
-              {/* Card Footer with Members and Balance */}
-              <div className="p-3.5 flex items-center justify-between bg-white dark:bg-neutral-800">
-                <div className="flex items-center gap-2">
-                  <AvatarStack members={group.members} size="xs" max={3} />
-                  <span className="text-xs text-neutral-600 dark:text-neutral-300 font-medium">
-                    {group.members.length} {t('groups.members_count', undefined, 'members')}
-                  </span>
-                </div>
-
-                <div className="text-right">
-                  <div className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
-                    {isPositive ? t('home.you_are_owed', undefined, 'You are owed') : t('home.you_owe', undefined, 'You owe')}
-                  </div>
-                  <div
-                    className={`text-sm font-extrabold tabular-nums ${
-                      isPositive
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-amber-600 dark:text-amber-400'
-                    }`}
-                  >
-                    {isPositive ? '+' : ''}${Math.abs(group.yourBalance || 0).toFixed(2)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
-      {/* 7. RECENT ACTIVITY FEED */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
+      {/* 4. RECENT ACTIVITY FEED (Minimal, scannable transaction list) */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between pt-1">
           <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             {t('home.recent_activity', undefined, 'Recent Activity')}
           </h2>
-          <span className="text-[11px] text-neutral-400 font-medium">{t('home.past_4_days', undefined, 'Past 4 days')}</span>
+          <span className="text-[11px] text-neutral-400 font-medium flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>Latest</span>
+          </span>
         </div>
 
-        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/80 bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-200/80 dark:border-neutral-700/80 overflow-hidden shadow-xs">
-          {expenses.slice(0, 4).map((expense) => {
+        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/70 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-200/80 dark:border-neutral-700/80 overflow-hidden shadow-2xs">
+          {expenses.slice(0, 3).map((expense) => {
             const isPayer = expense.paidById === 'user-nijat';
             return (
               <div
                 key={expense.id}
-                className="p-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                className="p-3 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/40 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-700/80 flex items-center justify-center shrink-0">
                     {getCategoryIcon(expense.category)}
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-neutral-900 dark:text-white leading-tight">
                       {expense.title}
                     </h4>
-                    <p className="text-[11px] text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5 font-medium">
-                      <span>{isPayer ? t('expense.you_paid', undefined, 'You paid') : `${t('expense.paid_by', undefined, 'Paid by')} Arif`}</span>
+                    <p className="text-[10px] text-neutral-400 dark:text-neutral-400 flex items-center gap-1 mt-0.5">
+                      <span>{isPayer ? 'You paid' : 'Paid by Arif'}</span>
                       <span>•</span>
                       <span>{new Date(expense.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                     </p>
@@ -345,14 +356,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <div className="text-xs font-bold text-neutral-900 dark:text-white tabular-nums">
                     ${(expense.amount || 0).toFixed(2)}
                   </div>
-                  <div className="text-[10px] text-neutral-500 dark:text-neutral-400 tabular-nums">
+                  <div className="text-[10px] tabular-nums font-semibold">
                     {isPayer ? (
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                        you lent ${((expense.amount || 0) - (expense.splits?.find(s => s.memberId === 'user-nijat')?.amount || 0)).toFixed(2)}
+                      <span className="text-emerald-600 dark:text-emerald-400">
+                        +${((expense.amount || 0) - (expense.splits?.find(s => s.memberId === 'user-nijat')?.amount || 0)).toFixed(2)}
                       </span>
                     ) : (
-                      <span className="text-amber-600 dark:text-amber-400 font-semibold">
-                        your share ${(expense.splits?.find(s => s.memberId === 'user-nijat')?.amount || 0).toFixed(2)}
+                      <span className="text-amber-600 dark:text-amber-400">
+                        -${(expense.splits?.find(s => s.memberId === 'user-nijat')?.amount || 0).toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -365,4 +376,3 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     </div>
   );
 };
-

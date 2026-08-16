@@ -135,7 +135,7 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
               </div>
 
               <div className="flex justify-center -my-1">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 flex items-center justify-center font-bold">
                   ↓
                 </div>
               </div>
@@ -187,13 +187,13 @@ export const SettlementScreen: React.FC<SettlementScreenProps> = ({
             </div>
 
             {/* Reassurance Banner */}
-            <div className="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/60 flex items-start gap-2.5 text-xs text-neutral-700 dark:text-neutral-300">
-              <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-start gap-2.5 text-xs text-neutral-700 dark:text-neutral-300">
+              <ShieldCheck className="w-5 h-5 text-[#6552FF] dark:text-indigo-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-emerald-900 dark:text-emerald-300">
+                <p className="font-bold text-neutral-900 dark:text-white">
                   {t('settings.never_moves_money', undefined, 'Balanzo records who owes whom.')}
                 </p>
-                <p className="text-[11px] text-neutral-600 dark:text-neutral-300 mt-0.5 leading-relaxed font-medium">
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-relaxed font-medium">
                   {t('settings.never_moves_money_desc', undefined, 'Recording a settlement updates group balances without moving funds through our system.')}
                 </p>
               </div>
