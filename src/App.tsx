@@ -177,14 +177,16 @@ export default function App() {
   const handleExpenseAdded = (newExpense: Expense) => {
     setExpenses((prev) => [newExpense, ...prev]);
 
-    // Update group total
+    // Update group total and user balance
     setGroups((prev) =>
       prev.map((g) => {
         if (g.id === newExpense.groupId) {
+          const userPaid = newExpense.paidById === 'user-nijat' ? newExpense.amount : 0;
+          const userShare = newExpense.splits.find((s) => s.memberId === 'user-nijat')?.amount || 0;
           return {
             ...g,
             totalExpenses: (g.totalExpenses || 0) + newExpense.amount,
-            yourBalance: (g.yourBalance || 0) + (newExpense.amount - (newExpense.splits.find(s => s.memberId === 'user-nijat')?.amount || 0)),
+            yourBalance: (g.yourBalance || 0) + (userPaid - userShare),
           };
         }
         return g;
